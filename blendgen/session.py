@@ -2,27 +2,26 @@
 
 # Dependencies
 from os import getcwd
-from tabulate import tabulate  # pylint: disable=import-error
-import bpy  # pylint: disable=import-error
+from tabulate import tabulate
+import bpy
 
 # Components
 from blendgen.renderer import RendererType
 from blendgen.renderer import Renderer
 from blendgen.dataset import Dataset, DatasetOutputType
-from blendgen.util import is_function
+from blendgen.utils.callables import is_function
 
 
-class Session(object):
+class Session:
     """"A session wrapper class used to manage dataset creation"""
 
     def __init__(self,
                  renderer=None,
                  dataset=None,
-                 renderer_type=RendererType.cycles,
-                 output_dir="{}/data/toy_dataset/".format(getcwd()),
+                 renderer_type=RendererType.CYCLES,
+                 output_dir=f"{getcwd()}/data/toy_dataset/",
                  frame_length=1,
                  passes=None,
-                 attributes=None,
                  on_before_new_frame=None,
                  on_after_new_frame=None,
                  on_start=None,
@@ -38,7 +37,6 @@ class Session(object):
                 (default: {"data/toy_dataset/"})
             frame_length {int} -- Length of sequence to render (default: {1})
             passes {list} -- A list of render passes (default: {None})
-            attributes {list} -- A list of attributes (default: {None})
             on_before_new_frame {function} -- Callback called before a \
                 new frame is rendered (default: {None})
             on_after_new_frame {function} -- Callback called after a \
@@ -51,7 +49,6 @@ class Session(object):
         self.__renderer_type = renderer_type
         self.__output_dir = output_dir
         self.__frame_length = frame_length
-        self.__attributes = attributes
 
         # Save the dependency graph which needs to be evaluated for matrix updates
         self.__depsgraph = bpy.context.evaluated_depsgraph_get()
@@ -112,7 +109,7 @@ class Session(object):
             self.__on_complete()
 
     def update(self):
-        """Force update all the data blocks in the scene - replace scene.update() from bpy 2.7"""
+        """Force-update data blocks, replacing Blender 2.7's ``scene.update``."""
         self.__depsgraph.update()
 
     @property

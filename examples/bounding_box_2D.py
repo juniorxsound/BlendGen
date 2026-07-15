@@ -3,7 +3,8 @@ from blendgen.passes.color import ColorPass
 from blendgen.dataset import Dataset, DatasetOutputType
 from blendgen.renderer import Renderer
 from blendgen.passes.base import ImageOutputType
-from blendgen.util import camera_view_bounds_2d, select
+from blendgen.util import camera_view_bounds_2d
+from blendgen.utils.scene import select
 
 '''
 An advanced example that shows how to store 2D (i.e screen space) bounding box

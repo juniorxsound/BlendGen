@@ -1,58 +1,25 @@
 """BlendGen - Written by @juniorxsound <https://orfleisher.com>"""
-import bpy  # pylint: disable=import-error
-import bpy_extras  # pylint: disable=import-error
-from mathutils import Matrix, Vector  # pylint: disable=import-error
+import bpy
+import bpy_extras
+from mathutils import Matrix
 
+from blendgen.utils.callables import is_function
+from blendgen.utils.scene import bounding_box_to_world_positions, clamp, select
 
-def is_function(obj):
-    """Checks wheter an object is callable (i.e a function)
-
-    Arguments:
-        obj {object} -- The object to check
-
-    Returns:
-        bool -- Is the object passed a callable one?
-    """
-    return hasattr(obj, "__call__")
-
-
-def select(name=None):
-    """A small util to retrive Blender objects
-
-    Keyword Arguments:
-        name {`str`} -- Name of object (default: {None})
-
-    Raises:
-        RuntimeError: When a name is not provided or when it is not a string
-
-    Returns:
-        {`bpy.types.Object`} -- Blender object
-    """
-    if (name is None or isinstance(name, str) is False):
-        raise RuntimeError(
-            "select() must be given a valid string name to retrive Blender object")
-
-    return bpy.data.objects[name]
-
-
-def bounding_box_to_world_positions(obj):
-    """A small util to transform an object's bounding box
-       to world positions and return a list of lists
-
-    Arguments:
-        obj {bpy.types.Object} -- The blender object to get bounding box for
-
-    Returns:
-        list -- A list of lists of 3D positions in world space
-    """
-    # return [(obj.matrix_world @ mathutils.Vector(corner))[:] for
-    #         corner in obj.bound_box]
-    return [v[:] for v in obj.bound_box]
-
-
-def clamp(input_num, minimum, maximum):
-    """A small number clamp util"""
-    return max(minimum, min(input_num, maximum))
+__all__ = [
+    "bounding_box_to_world_positions",
+    "camera_view_bounds_2d",
+    "clamp",
+    "get_camera_matrices",
+    "get_intrinsic_matrix",
+    "get_pose_bone_world_matrix",
+    "get_rt_matrix",
+    "get_screen_coords",
+    "get_sensor_fit",
+    "get_sensor_size",
+    "is_function",
+    "select",
+]
 
 
 def camera_view_bounds_2d(scene, cam_ob, me_ob):
@@ -76,8 +43,6 @@ def camera_view_bounds_2d(scene, cam_ob, me_ob):
     :return: a Box object (call its to_tuple() method to get x, y, width and height)
     :rtype: :class:`Box`
     """
-
-    # pylint: disable=invalid-name
 
     mat = cam_ob.matrix_world.normalized().inverted()
     depsgraph = bpy.context.evaluated_depsgraph_get()
@@ -191,8 +156,7 @@ def get_sensor_fit(sensor_fit, size_x, size_y):
     if sensor_fit == 'AUTO':
         if size_x >= size_y:
             return 'HORIZONTAL'
-        else:
-            return 'VERTICAL'
+        return 'VERTICAL'
     return sensor_fit
 
 
@@ -234,11 +198,11 @@ def get_intrinsic_matrix(renderer):
         view_fac_in_px / pixel_aspect_ratio
     skew = 0  # only use rectangular pixels
 
-    K = Matrix(
+    intrinsic_matrix = Matrix(
         ((s_u, skew, u_0),
          (0, s_v, v_0),
          (0, 0, 1)))
-    return K
+    return intrinsic_matrix
 
 
 def get_rt_matrix(renderer):

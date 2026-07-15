@@ -3,7 +3,7 @@ from blendgen.passes.color import ColorPass
 from blendgen.dataset import Dataset, DatasetOutputType
 from blendgen.renderer import Renderer
 from blendgen.passes.base import ImageOutputType
-from blendgen.util import bounding_box_to_world_positions, select
+from blendgen.utils.scene import bounding_box_to_world_positions, select
 
 '''
 An advanced example that shows how to store 3D (i.e world space) bounding box

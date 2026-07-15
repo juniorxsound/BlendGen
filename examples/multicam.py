@@ -4,7 +4,9 @@ from blendgen.passes.alpha import AlphaPass
 from blendgen.dataset import Dataset, DatasetOutputType
 from blendgen.renderer import Renderer
 from blendgen.passes.base import ImageOutputType
-from blendgen.util import get_pose_bone_world_matrix, get_screen_coords, select, get_camera_matrices
+from blendgen.util import (get_camera_matrices, get_pose_bone_world_matrix,
+                           get_screen_coords)
+from blendgen.utils.scene import select
 
 # Create the dataset
 dataset = Dataset("",

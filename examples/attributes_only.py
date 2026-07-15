@@ -3,7 +3,7 @@ from blendgen.passes.color import ColorPass
 from blendgen.dataset import Dataset, DatasetOutputType
 from blendgen.renderer import Renderer
 from blendgen.passes.base import ImageOutputType
-from blendgen.util import select
+from blendgen.utils.scene import select
 
 '''
 A simple example that shows how to store attributes only without rendering images at all. 

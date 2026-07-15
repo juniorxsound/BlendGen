@@ -4,32 +4,59 @@ LABEL org.opencontainers.image.title="BlendGen GPU"
 LABEL org.opencontainers.image.description="GPU-accelerated synthetic data generation with Blender"
 LABEL org.opencontainers.image.authors="Or Fleisher <contact@orfleisher.com>"
 
+ARG BLENDER_VERSION=5.1.2
+ARG BLENDER_SHA256=aaccb355f50183979b698bcce7467103a76261b5fa59f4972295842662a285fb
+
 ENV DEBIAN_FRONTEND=noninteractive \
     LANG=C.UTF-8 \
     LC_ALL=C.UTF-8 \
     HW=GPU \
     NVIDIA_VISIBLE_DEVICES=all \
-    NVIDIA_DRIVER_CAPABILITIES=compute,utility,graphics
+    NVIDIA_DRIVER_CAPABILITIES=compute,utility,graphics \
+    PATH=/opt/blender:${PATH}
 
-# Blender loads CUDA/OptiX through the NVIDIA driver exposed by the NVIDIA
-# Container Toolkit, so a full CUDA development image is unnecessary.
+# Blender 5.1.2 is published upstream for Linux x64 only. The NVIDIA
+# Container Toolkit supplies the host driver when this image is run with
+# ``--gpus all``.
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
-        blender \
         ca-certificates \
+        curl \
         libegl1 \
+        libgl1 \
+        libglib2.0-0 \
+        libsm6 \
+        libx11-6 \
+        libxfixes3 \
+        libxi6 \
+        libxkbcommon0 \
+        libxrender1 \
+        libxxf86vm1 \
         python3 \
         python3-pip \
-    && rm -rf /var/lib/apt/lists/*
+        xz-utils \
+    && rm -rf /var/lib/apt/lists/* \
+    && curl -fsSLo /tmp/blender.tar.xz \
+        https://download.blender.org/release/Blender5.1/blender-${BLENDER_VERSION}-linux-x64.tar.xz \
+    && echo "${BLENDER_SHA256}  /tmp/blender.tar.xz" | sha256sum --check \
+    && tar -xJf /tmp/blender.tar.xz -C /opt \
+    && ln -s /opt/blender-${BLENDER_VERSION}-linux-x64 /opt/blender \
+    && rm /tmp/blender.tar.xz
 
 COPY requirements.txt /tmp/requirements.txt
-COPY docker/blendgen.pth /usr/local/lib/python3.12/dist-packages/blendgen.pth
 
 RUN python3 -m pip install \
         --break-system-packages \
         --no-cache-dir \
         -r /tmp/requirements.txt \
+    && /opt/blender/5.1/python/bin/python3.13 -m ensurepip --upgrade \
+    && /opt/blender/5.1/python/bin/python3.13 -m pip install \
+        --no-cache-dir \
+        'numpy>=2,<3' \
+        'tabulate>=0.9,<1' \
     && rm /tmp/requirements.txt
+
+COPY docker/blendgen.pth /opt/blender/5.1/python/lib/python3.13/site-packages/blendgen.pth
 
 WORKDIR /data
 

@@ -4,3 +4,4 @@ jupyter>=1,<2
 matplotlib>=3.9,<4
 opencv-python-headless>=4.10,<5
 numpy>=2,<3
+OpenEXR>=3.3,<4

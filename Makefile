@@ -3,23 +3,17 @@
 
 dockerfile := docker/Dockerfile.cpu
 docker_image_tag ?= blendgen:latest
-runtime :=
+jupyter_image_tag ?= blendgen-jupyter:latest
+# Blender 5.1.2 has no official Linux ARM64 release. Docker Desktop emulates
+# this x64 image on Apple Silicon so it can open Blender 5 files.
+docker_platform := linux/amd64
+runtime := --platform $(docker_platform)
 blend_project := examples/blend/character_4_cams.blend
 blender_flags := --background --python-exit-code 1
 
-host_arch := $(shell uname -m)
-ifeq ($(host_arch),x86_64)
-	docker_arch := amd64
-else ifeq ($(host_arch),aarch64)
-	docker_arch := arm64
-else
-	docker_arch := $(host_arch)
-endif
-docker_platform ?= linux/$(docker_arch)
-
 # If NVIDIA SMI is intalled use the GPU docker file and change the runtime to include all gpus
 ifneq (, $(shell which nvidia-smi))
-	runtime = --gpus all
+	runtime += --gpus all
 	dockerfile = docker/Dockerfile.gpu
 endif
 
@@ -31,7 +25,8 @@ build:
 	docker build --platform $(docker_platform) -f $(dockerfile) -t $(docker_image_tag) .
 
 build-arm64:
-	docker build --platform linux/arm64 -f docker/Dockerfile.cpu -t $(docker_image_tag)-arm64 .
+	@echo "Blender 5.1.2 has no official Linux ARM64 build; use 'make build'."
+	@exit 1
 
 build-amd64:
 	docker build --platform linux/amd64 -f docker/Dockerfile.cpu -t $(docker_image_tag)-amd64 .
@@ -39,8 +34,11 @@ build-amd64:
 shell:
 	docker run $(runtime) -w /data --rm -it -v $(PWD):/data -t $(docker_image_tag) /bin/bash
 
-jupyter:
-	docker run $(runtime) -p 8083:8083 -w /data --rm -it -v $(PWD):/data -t $(docker_image_tag) jupyter notebook --ip 0.0.0.0 --port 8083 --allow-root
+build-jupyter:
+	docker build -f docker/Dockerfile.jupyter -t $(jupyter_image_tag) .
+
+jupyter: build-jupyter
+	docker run --init -p 127.0.0.1:8083:8083 -w /data --rm -v $(PWD):/data $(jupyter_image_tag) jupyter notebook --ip 0.0.0.0 --port 8083 --allow-root
 
 # BlendGen util Docker commands 🧹
 lint:

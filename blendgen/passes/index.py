@@ -11,19 +11,17 @@ class MaterialIndexPass(BaseRenderPass):
                  output_type=ImageOutputType.PNG,
                  rgb=None):
         super().__init__(prefix, output_type)
-        self.__output_type = output_type
         self.__index = index
         self.__rgb = rgb
 
-    def init(self, scene, base_path, background):
-        super().init(scene, base_path, background)
-
-    def create_pass(self, input):
+    def create_pass(self, render_layers):
         # Create the id mask based on the index
-        self.id_mask(self.__index, self.__rgb)
+        self.add_material_index_mask(self.__index, self.__rgb)
 
         # Create the output node
         self.output()
 
         # Connect all the nodes
-        self.connect_nodes(input.outputs[15])
+        material_index = (render_layers.outputs.get("IndexMA")
+                          or render_layers.outputs["Material Index"])
+        self.connect_nodes(material_index)

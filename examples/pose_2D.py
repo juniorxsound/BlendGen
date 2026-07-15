@@ -3,7 +3,8 @@ from blendgen.passes.color import ColorPass
 from blendgen.dataset import Dataset, DatasetOutputType
 from blendgen.renderer import Renderer
 from blendgen.passes.base import ImageOutputType
-from blendgen.util import get_pose_bone_world_matrix, get_screen_coords, select
+from blendgen.util import get_pose_bone_world_matrix, get_screen_coords
+from blendgen.utils.scene import select
 
 '''
 An advanced example that shows how to store 2D (i.e screen space) pose bone psotion

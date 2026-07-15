@@ -7,37 +7,33 @@ from blendgen.passes.base import BaseRenderPass, ImageOutputType
 class DepthPass(BaseRenderPass):
     def __init__(self,
                  prefix="",
-                 map=False,
-                 min=0,
-                 max=255,
-                 invert=False,
+                 map_values=False,
+                 minimum=0,
+                 maximum=255,
+                 invert_values=False,
                  size=0.08,
                  output_type=ImageOutputType.PNG):
         super().__init__(prefix, output_type)
-        self.__min = min
-        self.__max = max
-        self.__invert = invert
-        self.___map = map
-        self.__output_type = output_type
+        self.__minimum = minimum
+        self.__maximum = maximum
+        self.__invert_values = invert_values
+        self.__map_values = map_values
         self.__size = size
 
-    def init(self, scene, base_path, background):
-        super().init(scene, base_path, background)
-
-    def create_pass(self, input):
+    def create_pass(self, render_layers):
 
         # Create range mapper node
-        if self.___map is True:
-            self.map(min=self.__min,
-                     max=self.__max,
-                     size=self.__size)
+        if self.__map_values:
+            self.add_map_value(minimum=self.__minimum,
+                               maximum=self.__maximum,
+                               size=self.__size)
 
         # Create an invert node
-        if self.__invert is True:
-            self.invert()
+        if self.__invert_values:
+            self.add_invert()
 
         # Create the output node
         self.output()
 
         # Connect all the nodes
-        self.connect_nodes(input.outputs[2])
+        self.connect_nodes(render_layers.outputs["Depth"])

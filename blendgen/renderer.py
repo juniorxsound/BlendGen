@@ -3,26 +3,29 @@
 # Dependencies
 from os import getenv
 from enum import Enum
-import bpy  # pylint: disable=import-error
+import bpy
+
+from blendgen.compositor import (compositor_tree, convert_temporary_output,
+                                 set_frame_filename)
 
 
 class Background(Enum):
     """An enum to define the background of a rendered scene"""
-    alpha = "TRANSPARENT"
-    sky = "SKY"
+    ALPHA = "TRANSPARENT"
+    SKY = "SKY"
 
 
 class RendererType(Enum):
     """An enum to globally define renderer type"""
-    cycles = "CYCLES"
+    CYCLES = "CYCLES"
 
 
-class Renderer(object):
+class Renderer:
     """A renderer wrapper class used for rendering different passes"""
 
     def __init__(self,
-                 renderer_type=RendererType.cycles,
-                 background=Background.alpha,
+                 renderer_type=RendererType.CYCLES,
+                 background=Background.ALPHA,
                  use_full_sample=True,
                  samples=2,
                  resolution_percentage=100,
@@ -52,11 +55,13 @@ class Renderer(object):
             output_base_path {str} -- The base path for \
                 the dataset (default: {"data/toy_dataset/"})
             passes {list} -- List of rendering passes (default: {None})
-            render_images {bool} -- Should the session render images or not (default: {True})
+            render_images {bool} -- Should the session render images or not
+                (default: {True})
         """
 
-        print("[BlendGen] Starting renderer with {} acceleration"
-              .format(hardware_acceleration))
+        message = "[BlendGen] Starting renderer with " \
+            f"{hardware_acceleration} acceleration"
+        print(message)
 
         # Save paths
         self.__output_base_path = output_base_path
@@ -71,14 +76,16 @@ class Renderer(object):
         self.__height = resolution_y
         self.__render_images = render_images
         for scene in self.__scene_list:
-            # Set cycles to use nodes and clean all the configurations
+            # Set cycles to use nodes and clean all the configurations.
+            # Blender 5 stores the compositor tree in
+            # ``compositing_node_group`` rather than ``Scene.node_tree``.
             scene.use_nodes = True
             scene.cycles.samples = samples
             scene.unit_settings.system = 'METRIC'
 
-            scene.node_tree.nodes.clear()
+            compositor_tree(scene, bpy).nodes.clear()
 
-            if background is Background.alpha:
+            if background is Background.ALPHA:
                 scene.render.film_transparent = True
 
             # Activate all the passes we support
@@ -103,12 +110,11 @@ class Renderer(object):
         self.__init_renderer_type(renderer_type)
 
         # Create the render layer compositor
-        self.__render_layers = self.__active_scene.node_tree.nodes.new(
-            'CompositorNodeRLayers'
-        )
+        compositor = compositor_tree(self.__active_scene, bpy)
+        self.__render_layers = compositor.nodes.new('CompositorNodeRLayers')
 
         # Create all the render passes if we have any
-        if (passes):
+        if passes:
             for render_pass in passes:
                 render_pass.init(self.__active_scene,
                                  self.__output_base_path,
@@ -134,11 +140,31 @@ class Renderer(object):
         paths = []
 
         # Only render image if not otherwise specified in constructor
-        if (self.__render_images):
+        if self.__render_images:
+            for render_pass in self.__passes:
+                output_node = render_pass.output_node
+                if not hasattr(output_node, "base_path"):
+                    # Blender 5's File Output node no longer appends the
+                    # frame number itself.
+                    set_frame_filename(output_node, current_frame)
+
             bpy.ops.render.render(write_still=True)
             for render_pass in self.__passes:
-                file_name = "/Image{:0>4}{}".format(current_frame,
-                                                    render_pass.file_extension)
+                file_name = f"/Image{current_frame:0>4}{render_pass.file_extension}"
+
+                output_node = render_pass.output_node
+                if (not hasattr(output_node, "base_path")
+                        and render_pass.file_extension != ".exr"):
+                    # Blender 5's File Output node writes EXR regardless of
+                    # the per-item image format. Convert the temporary EXR
+                    # to the pass's requested format to retain BlendGen's
+                    # existing PNG/JPEG/TIFF API.
+                    target_path = render_pass.render_path + file_name
+                    convert_temporary_output(
+                        output_node,
+                        target_path,
+                        display_transform=render_pass.display_transform)
+
                 paths.append(
                     {render_pass.type: render_pass.render_path + file_name})
 
@@ -162,7 +188,7 @@ class Renderer(object):
         cprefs = prefs.addons['cycles'].preferences
 
         # Calling this purges the device list so we need it
-        cuda_devices, opencl_devices = cprefs.get_devices()  # pylint: disable=unused-variable
+        cprefs.get_devices()
 
         # Attempt to set GPU device types if available
         for compute_device_type in ('CUDA', 'OPENCL'):

@@ -1,0 +1,17 @@
+[MASTER]
+ignore-paths=^notebooks/
+
+[MAIN]
+py-version=3.13
+
+[TYPECHECK]
+ignored-modules=bpy,bpy_extras,mathutils,OpenImageIO
+
+[FORMAT]
+max-line-length=88
+
+[DESIGN]
+max-args=11
+max-positional-arguments=11
+max-attributes=12
+max-locals=25

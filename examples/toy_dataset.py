@@ -8,7 +8,9 @@ from blendgen.passes.normal import NormalPass
 from blendgen.passes.opticalflow import OpticalFlowPass
 from blendgen.passes.index import MaterialIndexPass
 from blendgen.passes.base import ImageOutputType
-from blendgen.util import *
+from blendgen.util import (camera_view_bounds_2d, get_pose_bone_world_matrix,
+                           get_screen_coords)
+from blendgen.utils.scene import select
 
 '''
 A render pass example that shows how to render different passes using BlendGen
@@ -20,7 +22,7 @@ Inside the Makefile
 dataset = Dataset("", output_type=DatasetOutputType.JSON)
 
 # Create the renderer
-renderer = Renderer(passes=[
+renderer = Renderer(samples=128, passes=[
     ColorPass(prefix="color",
               output_type=ImageOutputType.PNG),
     DepthPass(prefix="depth",
@@ -30,7 +32,7 @@ renderer = Renderer(passes=[
                     output_type=ImageOutputType.EXR),
     AlphaPass(prefix="alpha",
               output_type=ImageOutputType.PNG),
-    MaterialIndexPass(prefix="index", index=0)
+    MaterialIndexPass(prefix="index", index=1)
 ])
 
 
@@ -38,18 +40,18 @@ def on_before_new_frame(sess):
     # Get the world coords of the bounding box corners
     screen_coords = camera_view_bounds_2d(renderer.scene,
                                           renderer.camera,
-                                          select("Model"))
+                                          select("unamed"))
 
     # Add the bone's world position and name to the dataset attributes
     dataset.add_attribute(
         attribute_name="bounding_box",
         attribute_value=screen_coords)
 
-    for bone in select("Armature").data.bones:
+    for bone in select("Character").data.bones:
 
         # Get the world position of each bone
         world_matrix = get_pose_bone_world_matrix(
-            select("Armature"), bone.name)
+            select("Character"), bone.name)
         world_pos, world_rot, world_scale = world_matrix.decompose()
 
         # Get the screen position from each world position

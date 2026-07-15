@@ -4,7 +4,7 @@
 import json
 from enum import Enum
 from datetime import datetime
-import numpy as np  # pylint: disable=import-error
+import numpy as np
 
 
 class DatasetOutputType(Enum):
@@ -13,7 +13,7 @@ class DatasetOutputType(Enum):
     NPY = "NPY"
 
 
-class Dataset(object):
+class Dataset:
     """A wrapper class to define the dataset index file
 
     Raises:
@@ -111,17 +111,15 @@ class Dataset(object):
 
         # Serialize to JSON
         if self.__output_type is DatasetOutputType.JSON:
-            with open("{}{}.{}".format(self.__base_path,
-                                       self.__file_name,
-                                       self.__output_type.value.lower()),
-                      "w") as outfile:
+            output_path = (f"{self.__base_path}{self.__file_name}."
+                           f"{self.__output_type.value.lower()}")
+            with open(output_path, "w", encoding="utf-8") as outfile:
                 json.dump(self.__dataset, outfile)
 
         # Serialise to npy binary
         if self.__output_type is DatasetOutputType.NPY:
-            np.save("{}{}.{}".format(self.__base_path,
-                                     self.__file_name,
-                                     self.__output_type.value.lower()),
+            np.save(f"{self.__base_path}{self.__file_name}."
+                    f"{self.__output_type.value.lower()}",
                     np.array(self.__dataset)
                     )
 
