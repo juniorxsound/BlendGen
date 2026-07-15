@@ -1,7 +1,7 @@
 <div align="center">
     <h1>Welcome to the BlendGen docs 👋🏽</h1>
     <img src="assets/cover.gif" width="1000" />
-    <a href="https://drone.dv.nyt.net/nytimes/BlendGen" target="_blank"><img alt="Build Status" src="https://drone.dv.nyt.net/api/badges/nytimes/BlendGen/status.svg" /></a>
+    <a href="https://github.com/juniorxsound/BlendGen/actions/workflows/ci.yml" target="_blank"><img alt="Build Status" src="https://github.com/juniorxsound/BlendGen/actions/workflows/ci.yml/badge.svg" /></a>
     <img alt="Python version" src="https://img.shields.io/badge/python-3.6-blue.svg" />
     <img alt="License" src="https://img.shields.io/badge/License-Apache%202.0-yellow.svg" /><br/>
     <h4></h4>
