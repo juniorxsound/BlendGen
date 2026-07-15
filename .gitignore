@@ -1,0 +1,7 @@
+# Generated synthetic datasets
+/data/**
+!/data/**/.gitkeep
+
+# Python bytecode
+__pycache__/
+*.py[cod]

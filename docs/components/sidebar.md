@@ -1,0 +1,8 @@
+- [Getting started](pages/getting-started.md)
+    - [Installation](pages/getting-started.md#installation)
+    - [Creating a dataset](pages/getting-started.md#create-a-dataset)
+    - [More options](pages/getting-started.md#more-options)
+- [API (Coming soon)](#)
+- [Contributing](pages/getting-started.md)
+    - [Code of conduct](pages/code-of-conduct.md)
+    - [Roadmap](#)
