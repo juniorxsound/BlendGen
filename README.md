@@ -6,9 +6,7 @@
     <img alt="License" src="https://img.shields.io/badge/License-Apache%202.0-yellow.svg" /><br/>
     <img width="750" src="https://github.com/juniorxsound/BlendGen/blob/main/docs/assets/cover.gif" /><br/>
     •
-    <a target="_blank" href="https://blendgen.xyz">Documentation</a> 📝
-    •
-    <a target="_blank" href="https://trello.com/b/lTahgAyc">Roadmap</a> 🛣
+    <a target="_blank" href="https://blendgen.orfleisher.com">Documentation</a> 📝
     •
     <a target="_blank" href="https://github.com/juniorxsound/BlendGen/tree/main/examples">Examples</a> 🛠
     •
