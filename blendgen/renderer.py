@@ -70,15 +70,13 @@ class Renderer(object):
         self.__width = resolution_x
         self.__height = resolution_y
         self.__render_images = render_images
-
         for scene in self.__scene_list:
             # Set cycles to use nodes and clean all the configurations
             scene.use_nodes = True
             scene.cycles.samples = samples
             scene.unit_settings.system = 'METRIC'
 
-            for layer in scene.node_tree.nodes:
-                scene.node_tree.nodes.remove(layer)
+            scene.node_tree.nodes.clear()
 
             if background is Background.alpha:
                 scene.render.film_transparent = True
@@ -90,12 +88,14 @@ class Renderer(object):
             scene.view_layers[0].use_pass_object_index = True
             scene.view_layers[0].use_pass_uv = True
             scene.view_layers[0].use_pass_material_index = True
-            scene.view_layers[0].use_ao = True
+            if hasattr(scene.view_layers[0], "use_ao"):
+                scene.view_layers[0].use_ao = True
 
             # Set rendering props
             scene.render.use_file_extension = True
             scene.render.image_settings.color_mode = 'RGBA'  # Enumrate this
-            scene.render.use_full_sample = use_full_sample
+            if hasattr(scene.render, "use_full_sample"):
+                scene.render.use_full_sample = use_full_sample
             scene.render.resolution_percentage = resolution_percentage
             scene.render.resolution_x = resolution_x
             scene.render.resolution_y = resolution_y

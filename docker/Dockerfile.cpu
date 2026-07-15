@@ -1,55 +1,35 @@
-FROM  ubuntu:18.04
-LABEL Author="Or Fleisher (contact@orfleisher.com)"
-LABEL Title="BlendGen: Synthetic Data for Machine Learning using Blender"
+FROM ubuntu:24.04
 
-# Enviorment variables
-ENV PYTHONPATH "${PYTHONPATH}:/data/blendgen"
-ENV PATH "$PATH:/bin/2.80/python/bin/"
-ENV BLENDER_PATH "/bin/2.80"
-ENV BLENDERPY "/bin/2.80/python/bin/python3.7m"
-ENV BLENDERPIP "/bin/2.80/python/bin/pip3"
-ENV DEBIAN_FRONTEND noninteractive
-ENV LC_ALL C.UTF-8
-ENV LANG C.UTF-8
-ENV HW="CPU"
+LABEL org.opencontainers.image.title="BlendGen CPU"
+LABEL org.opencontainers.image.description="Synthetic data generation with Blender"
+LABEL org.opencontainers.image.authors="Or Fleisher <contact@orfleisher.com>"
 
-# Install dependencies
-RUN apt-get update && apt-get install -y \
-    wget \
-    libopenexr-dev \
-    bzip2 \
-    build-essential \
-    zlib1g-dev \
-    libxmu-dev \
-    libxi-dev \
-    libxxf86vm-dev \
-    libfontconfig1 \
-    libxrender1 \
-    libgl1-mesa-glx
+ENV DEBIAN_FRONTEND=noninteractive \
+    LANG=C.UTF-8 \
+    LC_ALL=C.UTF-8 \
+    HW=CPU
 
-# Download and install Blender
-RUN wget https://mirror.clarkson.edu/blender/release/Blender2.80/blender-2.80-linux-glibc217-x86_64.tar.bz2 \ 
-    && tar -xvjf blender-2.80-linux-glibc217-x86_64.tar.bz2 --strip-components=1 -C /bin \
-    && rm -rf blender-2.80-linux-glibc217-x86_64.tar.bz2 \
-    && rm -rf blender-2.80-linux-glibc217-x86_64
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        blender \
+        ca-certificates \
+        libegl1 \
+        python3 \
+        python3-pip \
+    && rm -rf /var/lib/apt/lists/*
 
-# Download the Python source since it is not bundled with Blender
-RUN wget https://www.python.org/ftp/python/3.6.8/Python-3.6.8.tgz \
-    && tar -xzf Python-3.6.8.tgz \
-    && cp Python-3.6.8/Include/* $BLENDER_PATH/python/include/python3.7m/ \
-    && rm -rf Python-3.6.8.tgz \
-    && rm -rf Python-3.6.8
+COPY requirements.txt /tmp/requirements.txt
+COPY docker/blendgen.pth /usr/local/lib/python3.12/dist-packages/blendgen.pth
 
-# Blender comes with a super outdated version of numpy (which is needed for matplotlib / opencv) so override it with a modern one
-RUN rm -rf ${BLENDER_PATH}/python/lib/python3.7/site-packages/numpy
+# Ubuntu's Blender includes /usr/local/lib/python3.12/dist-packages in its
+# isolated Python path. The .pth file above also makes the mounted source tree
+# importable when Blender executes a script from /data.
+RUN python3 -m pip install \
+        --break-system-packages \
+        --no-cache-dir \
+        -r /tmp/requirements.txt \
+    && rm /tmp/requirements.txt
 
-# Copy over the python requirements file
-COPY requirements.txt .
+WORKDIR /data
 
-# Must first ensurepip to install Blender pip3 and install dependencies
-RUN ${BLENDERPY} -m ensurepip && \
-    ${BLENDERPIP} install --upgrade pip && \
-    ${BLENDERPIP} install -r ./requirements.txt
-
-# Set the working directory
-WORKDIR /
+CMD ["blender", "--version"]

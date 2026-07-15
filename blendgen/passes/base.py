@@ -114,7 +114,7 @@ class BaseRenderPass(object):
 
     def connect_nodes(self, layer_input):
         # If we have no ops just connect it - input to the output
-        if len(self.__ops) is 0:
+        if len(self.__ops) == 0:
             self.connect(layer_input,
                          self.output_node.inputs[0])
         else:

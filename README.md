@@ -15,3 +15,35 @@
     <a target="_blank" href="https://github.com/nytimes/BlendGen/tree/dev/notebooks">Notebooks</a> 📓
     •
 </div>
+
+## Docker
+
+The CPU image uses Ubuntu 24.04 LTS and its Blender 4.0 package. Both the base
+image and Blender package are available natively for `linux/amd64` and
+`linux/arm64`, so Docker Desktop on Apple Silicon does not need x86 emulation.
+
+Build the image for the current machine and check the installed Blender version:
+
+```sh
+make build
+docker run --rm blendgen:latest blender --version
+```
+
+Run the test suite or an example:
+
+```sh
+make test
+make simple
+```
+
+Architecture-specific local builds are also available:
+
+```sh
+make build-arm64
+make build-amd64
+```
+
+On a Linux host with `nvidia-smi`, the Makefile automatically selects the GPU
+image and passes `--gpus all`. GPU acceleration requires the NVIDIA Container
+Toolkit on the host. Docker Desktop on macOS cannot expose the Apple GPU to a
+Linux container, so Apple Silicon uses native ARM CPU rendering.
