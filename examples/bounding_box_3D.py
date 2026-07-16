@@ -23,7 +23,7 @@ renderer = Renderer(passes=[
 
 def on_before_new_frame(sess):
     # Get the world coords of the bounding box corners
-    world_coords = bounding_box_to_world_positions(select("Model"))
+    world_coords = bounding_box_to_world_positions(select("CharacterMesh"))
 
     # Add the bone's world position and name to the dataset attributes
     dataset.add_attribute(

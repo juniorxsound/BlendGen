@@ -41,7 +41,7 @@ def on_before_new_frame(sess):
     # Get the world coords of the bounding box corners
     screen_coords = camera_view_bounds_2d(renderer.scene,
                                           renderer.camera,
-                                          select("unamed"))
+                                          select("CharacterMesh"))
 
     # Add the bone's world position and name to the dataset attributes
     dataset.add_attribute(

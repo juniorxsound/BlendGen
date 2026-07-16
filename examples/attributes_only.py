@@ -22,7 +22,7 @@ renderer = Renderer(render_images=False)
 
 def on_before_new_frame(sess):
     # Get the model's position
-    x, y, z, w = select("Model").rotation_quaternion
+    x, y, z, w = select("Character").rotation_quaternion
 
     # Add the model's world position and name to the dataset attributes
     dataset.add_attribute(

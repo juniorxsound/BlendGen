@@ -25,11 +25,11 @@ renderer = Renderer(passes=[
 def on_before_new_frame(sess):
 
     # Iterate over all bones in the pose
-    for pose_bone in select("Armature").data.bones:
+    for bone in select("Character").data.bones:
 
         # Get the world position of each bone
         world_matrix = get_pose_bone_world_matrix(
-            select("Armature"), bone.name)
+            select("Character"), bone.name)
         world_pos, world_rot, world_scale = world_matrix.decompose()
 
         # Add it to the dataset
