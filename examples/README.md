@@ -13,3 +13,4 @@
 - [2D Pose](https://github.com/juniorxsound/BlendGen/blob/master/examples/pose_2D.py) - An example showing how to capture 2D pose in a dataset
 - [3D Pose](https://github.com/juniorxsound/BlendGen/blob/master/examples/pose_3D.py) - An example showing how to capture 3D pose in a dataset
 - [Toy Dataset](https://github.com/juniorxsound/BlendGen/blob/master/examples/toy_dataset.py) - An example showing how to capture 2D pose, 2D bounding box and multipule render passes in a dataset
+- [Eevee Rendering](https://github.com/juniorxsound/BlendGen/blob/master/examples/eevee-rendering.py) - Color and EXR depth rendering with the Eevee backend

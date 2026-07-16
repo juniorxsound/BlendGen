@@ -1,6 +1,7 @@
 from blendgen.session import Session
 from blendgen.dataset import Dataset, DatasetOutputType
 from blendgen.renderer import Renderer
+from blendgen.renderers import CyclesBackend
 from blendgen.passes.color import ColorPass
 from blendgen.passes.alpha import AlphaPass
 from blendgen.passes.depth import DepthPass
@@ -22,7 +23,7 @@ Inside the Makefile
 dataset = Dataset("", output_type=DatasetOutputType.JSON)
 
 # Create the renderer
-renderer = Renderer(samples=128, passes=[
+renderer = Renderer(backend=CyclesBackend(samples=128), passes=[
     ColorPass(prefix="color",
               output_type=ImageOutputType.PNG),
     DepthPass(prefix="depth",

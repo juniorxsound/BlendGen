@@ -5,6 +5,7 @@ from enum import Enum
 
 from blendgen.compositor import compositor_tree, create_output_node
 from blendgen.passes import operations
+from blendgen.renderers.base import RenderPassKind
 
 
 class ImageOutputType(Enum):
@@ -19,6 +20,7 @@ class ImageOutputType(Enum):
 
 
 class BaseRenderPass:
+    kind = None
     def __init__(self, prefix=None, output_type=None, display_transform=False):
         if prefix is None:
             raise ValueError("Must provide a prefix value")
@@ -80,6 +82,11 @@ class BaseRenderPass:
             for operation in self.__operations:
                 self.__connect(last_output, operation.input_socket)
                 last_output = operation.output_socket
+
+    def create_pass(self, source_socket):
+        """Build this pass from a backend-resolved compositor socket."""
+        self.output()
+        self.connect_nodes(source_socket)
 
     def __connect(self, input_op, output_op):
         if output_op is not None:

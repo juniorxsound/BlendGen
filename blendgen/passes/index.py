@@ -2,9 +2,11 @@
 
 # Components
 from blendgen.passes.base import BaseRenderPass, ImageOutputType
+from blendgen.renderers.base import RenderPassKind
 
 
 class MaterialIndexPass(BaseRenderPass):
+    kind = RenderPassKind.MATERIAL_INDEX
     def __init__(self,
                  prefix="",
                  index=0,
@@ -14,7 +16,7 @@ class MaterialIndexPass(BaseRenderPass):
         self.__index = index
         self.__rgb = rgb
 
-    def create_pass(self, render_layers):
+    def create_pass(self, source_socket):
         # Create the id mask based on the index
         self.add_material_index_mask(self.__index, self.__rgb)
 
@@ -22,6 +24,4 @@ class MaterialIndexPass(BaseRenderPass):
         self.output()
 
         # Connect all the nodes
-        material_index = (render_layers.outputs.get("IndexMA")
-                          or render_layers.outputs["Material Index"])
-        self.connect_nodes(material_index)
+        self.connect_nodes(source_socket)

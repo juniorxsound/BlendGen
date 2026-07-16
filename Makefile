@@ -61,6 +61,9 @@ callbacks:
 render_passes:
 	docker run $(runtime) -w /data --rm -v $(PWD):/data -t $(docker_image_tag) blender $(blender_flags) $(blend_project) --python examples/render_passes.py
 
+eevee-rendering:
+	docker run $(runtime) -w /data --rm -v $(PWD):/data -t $(docker_image_tag) blender $(blender_flags) $(blend_project) --python examples/eevee-rendering.py
+
 advanced:
 	docker run $(runtime) -w /data --rm -v $(PWD):/data -t $(docker_image_tag) blender $(blender_flags) $(blend_project) --python examples/advanced.py
 

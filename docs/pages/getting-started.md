@@ -68,6 +68,23 @@ If nothing blew up, you should have an image in `data/toy_dataset/color`
 
 For more BlendGen recepies [see the examples folder](https://github.com/juniorxsound/BlendGen/tree/master/examples)
 
+## Selecting a renderer
+
+`Renderer` accepts an explicit backend. Cycles is the default; its sample count
+and device are configured only on `CyclesBackend`. Eevee has its own small,
+engine-specific configuration surface:
+
+```python
+from blendgen.renderer import Renderer
+from blendgen.renderers import EeveeBackend
+
+renderer = Renderer(backend=EeveeBackend(samples=16), passes=[...])
+```
+
+The same color, alpha, depth, normal, and optical-flow pass classes work with
+both backends. Material-index output is deliberately rejected for Eevee until
+it can be reliably produced by the supported Blender runtime.
+
 # More options
 
 # Compatability

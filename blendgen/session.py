@@ -6,8 +6,8 @@ from tabulate import tabulate
 import bpy
 
 # Components
-from blendgen.renderer import RendererType
 from blendgen.renderer import Renderer
+from blendgen.renderers import CyclesBackend
 from blendgen.dataset import Dataset, DatasetOutputType
 from blendgen.utils.callables import is_function
 
@@ -18,7 +18,6 @@ class Session:
     def __init__(self,
                  renderer=None,
                  dataset=None,
-                 renderer_type=RendererType.CYCLES,
                  output_dir=f"{getcwd()}/data/toy_dataset/",
                  frame_length=1,
                  passes=None,
@@ -31,8 +30,6 @@ class Session:
         Keyword Arguments:
             renderer {Renderer} -- BlendGen Renderer instace (default: {None})
             dataset {Dataset} -- BlendGen Dataset instace (default: {None})
-            renderer_type {RendererType} -- Type of Blender \
-                rendering backend (default: {RendererType.cycles})
             output_dir {str} -- Dataset base path \
                 (default: {"data/toy_dataset/"})
             frame_length {int} -- Length of sequence to render (default: {1})
@@ -46,7 +43,6 @@ class Session:
             on_complete {function} -- Callback called after a \
                 dataset is rendered (default: {None})
         """
-        self.__renderer_type = renderer_type
         self.__output_dir = output_dir
         self.__frame_length = frame_length
 
@@ -65,9 +61,14 @@ class Session:
                          output_type=DatasetOutputType.JSON,
                          output_dir=output_dir)
 
-        # Crate the renderer or assign the passed renderer
-        self.__blendgen_renderer = renderer if isinstance(renderer, Renderer) \
-            else Renderer(self.__renderer_type, passes=passes)
+        if renderer is not None and not isinstance(renderer, Renderer):
+            raise ValueError("renderer must be a Renderer instance")
+        if renderer is not None and passes is not None:
+            raise ValueError("passes cannot be supplied with an explicit renderer")
+
+        # Create the renderer or assign the passed renderer.
+        self.__blendgen_renderer = renderer or Renderer(
+            backend=CyclesBackend(), passes=passes)
 
     def run(self):
         """Run the session and capture the dataset"""
@@ -192,7 +193,7 @@ class Session:
             str -- The ASCII table string
         """
         blender_project = bpy.path.abspath("//")
-        attrs = [[blender_project, self.__renderer_type.name,
+        attrs = [[blender_project, self.__blendgen_renderer.backend.name,
                   self.__output_dir, self.__frame_length]]
         names = ["Blender Project", "Renderer Type",
                  "Output Directory", "Frames"]

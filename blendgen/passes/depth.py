@@ -2,9 +2,11 @@
 
 # Components
 from blendgen.passes.base import BaseRenderPass, ImageOutputType
+from blendgen.renderers.base import RenderPassKind
 
 
 class DepthPass(BaseRenderPass):
+    kind = RenderPassKind.DEPTH
     def __init__(self,
                  prefix="",
                  map_values=False,
@@ -20,7 +22,7 @@ class DepthPass(BaseRenderPass):
         self.__map_values = map_values
         self.__size = size
 
-    def create_pass(self, render_layers):
+    def create_pass(self, source_socket):
 
         # Create range mapper node
         if self.__map_values:
@@ -36,4 +38,4 @@ class DepthPass(BaseRenderPass):
         self.output()
 
         # Connect all the nodes
-        self.connect_nodes(render_layers.outputs["Depth"])
+        self.connect_nodes(source_socket)
