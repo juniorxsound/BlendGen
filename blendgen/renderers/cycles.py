@@ -4,10 +4,12 @@ from dataclasses import dataclass
 from enum import Enum
 
 from blendgen.renderers.base import (RenderPassKind, UnsupportedRenderPassError,
-                                     resolve_socket)
+                                     resolve_socket, validate_known_passes)
 
 
 class CyclesDevice(Enum):
+    """Cycles rendering device choices."""
+
     CPU = "CPU"
     GPU = "GPU"
 
@@ -27,14 +29,15 @@ class CyclesBackend:
 
     @property
     def name(self):
+        """Return Blender's Cycles engine identifier."""
         return "CYCLES"
 
     def validate_passes(self, pass_kinds):
-        unsupported = set(pass_kinds) - set(RenderPassKind)
-        if unsupported:
-            raise UnsupportedRenderPassError(f"Unsupported render passes: {unsupported}")
+        """Ensure all requested passes are known to BlendGen."""
+        validate_known_passes(pass_kinds)
 
     def configure_scene(self, scene, blender):
+        """Configure Cycles and, when requested, its GPU preferences."""
         scene.render.engine = self.name
         scene.cycles.samples = self.samples
         scene.cycles.device = self.device.value
@@ -42,6 +45,7 @@ class CyclesBackend:
             self._configure_gpu(blender)
 
     def bind_pass(self, pass_kind, view_layer, render_layers):
+        """Enable and resolve one Cycles compositor pass."""
         self._enable_pass(pass_kind, view_layer)
         return resolve_socket(render_layers, pass_kind)
 

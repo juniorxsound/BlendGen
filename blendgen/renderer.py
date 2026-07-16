@@ -105,24 +105,30 @@ class Renderer:
 
     @property
     def cameras(self):
+        """Return the cameras available in the current Blender project."""
         return self.__camera_list
 
     @property
     def scenes(self):
+        """Return the scenes available in the current Blender project."""
         return self.__scene_list
 
     @property
     def camera(self):
+        """Return the active camera."""
         return self.__active_camera
 
     @property
     def scene(self):
+        """Return the active scene."""
         return self.__active_scene
 
     @property
     def width(self):
+        """Return the configured render width in pixels."""
         return self.__width
 
     @property
     def height(self):
+        """Return the configured render height in pixels."""
         return self.__height

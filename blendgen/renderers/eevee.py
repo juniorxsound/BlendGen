@@ -3,7 +3,7 @@
 from dataclasses import dataclass
 
 from blendgen.renderers.base import (RenderPassKind, UnsupportedRenderPassError,
-                                     resolve_socket)
+                                     resolve_socket, validate_known_passes)
 
 
 @dataclass(frozen=True)
@@ -18,23 +18,25 @@ class EeveeBackend:
 
     @property
     def name(self):
+        """Return Blender's Eevee engine identifier."""
         return "BLENDER_EEVEE"
 
     def validate_passes(self, pass_kinds):
+        """Ensure requested passes are reliable in Eevee."""
         if RenderPassKind.MATERIAL_INDEX in pass_kinds:
             raise UnsupportedRenderPassError(
                 "Eevee does not reliably expose the material-index pass in Blender 5")
-        unsupported = set(pass_kinds) - set(RenderPassKind)
-        if unsupported:
-            raise UnsupportedRenderPassError(f"Unsupported render passes: {unsupported}")
+        validate_known_passes(pass_kinds)
 
-    def configure_scene(self, scene, blender):
+    def configure_scene(self, scene, _blender):
+        """Configure Eevee samples for one Blender scene."""
         scene.render.engine = self.name
         if not hasattr(scene, "eevee"):
             raise RuntimeError("This Blender version does not provide Eevee settings")
         scene.eevee.taa_render_samples = self.samples
 
     def bind_pass(self, pass_kind, view_layer, render_layers):
+        """Enable and resolve one Eevee compositor pass."""
         flags = {
             RenderPassKind.DEPTH: "use_pass_z",
             RenderPassKind.NORMAL: "use_pass_normal",

@@ -1,6 +1,7 @@
 """Renderer backend contracts and shared render-pass semantics."""
 
 from enum import Enum
+from abc import abstractmethod
 from typing import Protocol
 
 
@@ -23,13 +24,25 @@ class RenderBackend(Protocol):
     """The small interface used by :class:`blendgen.renderer.Renderer`."""
 
     @property
-    def name(self) -> str: ...
+    @abstractmethod
+    def name(self) -> str:
+        """Return the Blender engine identifier."""
+        raise NotImplementedError
 
-    def validate_passes(self, pass_kinds) -> None: ...
+    @abstractmethod
+    def validate_passes(self, pass_kinds) -> None:
+        """Reject semantic passes unsupported by this backend."""
+        raise NotImplementedError
 
-    def configure_scene(self, scene, blender) -> None: ...
+    @abstractmethod
+    def configure_scene(self, scene, blender) -> None:
+        """Apply this backend's settings to one Blender scene."""
+        raise NotImplementedError
 
-    def bind_pass(self, pass_kind, view_layer, render_layers): ...
+    @abstractmethod
+    def bind_pass(self, pass_kind, view_layer, render_layers):
+        """Enable and return the compositor source for a semantic pass."""
+        raise NotImplementedError
 
 
 SOCKET_ALIASES = {
@@ -51,3 +64,11 @@ def resolve_socket(render_layers, pass_kind):
     aliases = ", ".join(SOCKET_ALIASES[pass_kind])
     raise UnsupportedRenderPassError(
         f"Blender did not expose a {pass_kind.value} socket (tried: {aliases})")
+
+
+def validate_known_passes(pass_kinds):
+    """Raise when a backend receives a pass outside BlendGen's semantics."""
+    unsupported = set(pass_kinds) - set(RenderPassKind)
+    if unsupported:
+        raise UnsupportedRenderPassError(
+            f"Unsupported render passes: {unsupported}")
