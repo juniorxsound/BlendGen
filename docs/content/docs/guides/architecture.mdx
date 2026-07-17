@@ -1,0 +1,35 @@
+---
+title: Architecture
+description: How Session, Renderer, render backends, passes, and Dataset cooperate.
+---
+
+## Ownership
+
+| Component | Owns | Does not own |
+| --- | --- | --- |
+| `Session` | Frame iteration, callbacks, orchestration | Pass configuration |
+| `Renderer` | Scene render settings, compositor graph, one render per frame | Dataset serialization |
+| Backend | Engine-specific configuration and pass socket binding | Frame iteration |
+| Render pass | Output format, compositor operations, final file path | Calling Blender's render loop |
+| `Dataset` | Frame records, attributes, JSON/NPY serialization | Rendering |
+
+## Frame lifecycle
+
+For every frame in `[frame_start, frame_start + frame_length)` the session:
+
+1. sets the Blender timeline frame;
+2. updates the dependency graph;
+3. invokes `on_before_new_frame(session)`;
+4. asks the renderer to render all declared passes together;
+5. adds the verified pass paths to the dataset;
+6. invokes `on_after_new_frame(session)`.
+
+After the range completes, it saves the dataset index and invokes `on_complete()`.
+
+## Why one render matters
+
+Beauty, depth, normals, optical flow, and IDs must describe the same scene state and sample realization. Calling Blender separately for each pass can introduce animation drift, random-sampling differences, and unnecessary cost. BlendGen configures the view-layer passes and compositor before calling `bpy.ops.render.render()` once per frame.
+
+## Defaults versus explicit configuration
+
+`Session(passes=[...])` remains a shorthand: it creates a default Cycles renderer and dataset. Prefer explicit `Renderer` and `Dataset` instances in production files because resolution, background, backend device, output root, and index format are then reviewable in one place.

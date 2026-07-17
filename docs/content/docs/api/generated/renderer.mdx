@@ -1,0 +1,127 @@
+---
+title: renderer
+description: Generated Python API reference for blendgen.renderer.
+---
+
+# `blendgen.renderer`
+
+> This page is generated from the Python source by `npm run generate:api`. Do not edit it by hand.
+
+Shared render orchestration for all Blender render backends.
+
+## `Background`
+
+[Class source](https://github.com/juniorxsound/BlendGen/blob/main/blendgen/renderer.py#L15)
+
+```python
+class Background(Enum)
+```
+
+Background behavior for color rendering.
+
+### Values
+
+```python
+ALPHA = 'TRANSPARENT'
+SKY = 'SKY'
+```
+
+## `Renderer`
+
+[Class source](https://github.com/juniorxsound/BlendGen/blob/main/blendgen/renderer.py#L22)
+
+```python
+class Renderer
+```
+
+Render requested semantic passes using an explicit backend.
+
+### `Renderer.__init__`
+
+[Method source](https://github.com/juniorxsound/BlendGen/blob/main/blendgen/renderer.py#L25)
+
+```python
+def __init__(self, *, backend=None, background=Background.ALPHA, resolution_percentage=100, resolution_x=1920, resolution_y=1080, output_base_path='data/toy_dataset/', passes=None, render_images=True)
+```
+
+No description is available yet.
+
+### `Renderer.render`
+
+[Method source](https://github.com/juniorxsound/BlendGen/blob/main/blendgen/renderer.py#L122)
+
+```python
+def render(self, current_frame)
+```
+
+Render a frame and return the existing dataset pass-path schema.
+
+### `Renderer.backend`
+
+[Property source](https://github.com/juniorxsound/BlendGen/blob/main/blendgen/renderer.py#L209)
+
+```python
+def backend(self)
+```
+
+The explicit backend configuration used by this renderer.
+
+### `Renderer.cameras`
+
+[Property source](https://github.com/juniorxsound/BlendGen/blob/main/blendgen/renderer.py#L214)
+
+```python
+def cameras(self)
+```
+
+Return the cameras available in the current Blender project.
+
+### `Renderer.scenes`
+
+[Property source](https://github.com/juniorxsound/BlendGen/blob/main/blendgen/renderer.py#L219)
+
+```python
+def scenes(self)
+```
+
+Return the scenes available in the current Blender project.
+
+### `Renderer.camera`
+
+[Property source](https://github.com/juniorxsound/BlendGen/blob/main/blendgen/renderer.py#L224)
+
+```python
+def camera(self)
+```
+
+Return the active camera.
+
+### `Renderer.scene`
+
+[Property source](https://github.com/juniorxsound/BlendGen/blob/main/blendgen/renderer.py#L229)
+
+```python
+def scene(self)
+```
+
+Return the active scene.
+
+### `Renderer.width`
+
+[Property source](https://github.com/juniorxsound/BlendGen/blob/main/blendgen/renderer.py#L234)
+
+```python
+def width(self)
+```
+
+Return the configured render width in pixels.
+
+### `Renderer.height`
+
+[Property source](https://github.com/juniorxsound/BlendGen/blob/main/blendgen/renderer.py#L239)
+
+```python
+def height(self)
+```
+
+Return the configured render height in pixels.

@@ -1,0 +1,24 @@
+---
+title: Python API reference
+description: Generated signatures and docstrings for BlendGen's public Python modules.
+---
+
+The module pages in this section are generated directly from the Python abstract syntax tree. This avoids importing `bpy` in the Node.js documentation build while keeping function signatures, enum values, source links, and docstrings synchronized with the repository.
+
+Run the generator directly:
+
+```bash
+cd docs
+npm run generate:api
+```
+
+`npm run dev`, `npm run build`, and `npm run types:check` run it automatically. Generated files live under `content/docs/api/generated` and should not be edited by hand.
+
+## Public entry points
+
+- `blendgen.session.Session` coordinates the frame lifecycle.
+- `blendgen.renderer.Renderer` and `Background` configure the render.
+- `blendgen.renderers` provides Cycles and Eevee backends.
+- `blendgen.passes` declares semantic outputs and formats.
+- `blendgen.dataset.Dataset` writes the frame index and attributes.
+- `blendgen.util` and `blendgen.utils.scene` provide camera, pose, selection, and projection helpers.

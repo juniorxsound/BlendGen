@@ -1,0 +1,42 @@
+---
+title: Callbacks and attributes
+description: Change the Blender scene per frame and record synchronized annotations.
+---
+
+## Callback order
+
+```python
+session = Session(
+    renderer=renderer,
+    dataset=dataset,
+    on_start=on_start,
+    on_before_new_frame=before_frame,
+    on_after_new_frame=after_frame,
+    on_complete=on_complete,
+)
+```
+
+- `on_start()` runs before frame iteration.
+- `on_before_new_frame(session)` runs after Blender changes frame and updates its dependency graph, but before rendering.
+- `on_after_new_frame(session)` runs after pass paths have been added to the current frame record.
+- `on_complete()` runs after the index is saved.
+
+Use the before-frame callback to randomize transforms, materials, lighting, or cameras. Keep all scene-specific `bpy` mutations in the dataset file or callbacks.
+
+## Attach an annotation
+
+`Dataset.add_attribute()` queues a key/value object for the next frame record:
+
+```python
+def before_frame(_session):
+    box = compute_box_for_current_scene()
+    dataset.add_attribute("vehicle_bbox_2d", box)
+```
+
+The queued per-frame attributes are cleared after `Dataset.add_frame()`. Values written to a JSON dataset must be JSON serializable; convert NumPy arrays and Blender math types to ordinary lists or dictionaries.
+
+## Camera and geometry utilities
+
+The public helpers in `blendgen.util` and `blendgen.utils.scene` support world-space boxes, projected screen coordinates, pose matrices, and camera calibration. Compute annotations from the same evaluated scene state that is about to render.
+
+Do not render inside a callback. `Session.run()` must remain the single owner of the render loop so declared outputs stay synchronized.

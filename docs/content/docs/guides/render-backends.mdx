@@ -1,0 +1,39 @@
+---
+title: Render backends
+description: Choose and configure Cycles or Eevee deliberately.
+---
+
+## Cycles
+
+Cycles is the general-purpose choice and supports every BlendGen pass, including material indices.
+
+```python
+from blendgen.renderers import CyclesBackend, CyclesDevice
+
+backend = CyclesBackend(samples=64, device=CyclesDevice.GPU)
+```
+
+Use `CyclesDevice.GPU` only when Blender can see a supported compute device. In Docker, that means the GPU image and `--gpus all`. Use `CyclesDevice.CPU` everywhere else.
+
+## Eevee
+
+Eevee is useful for fast iterations and supported workloads:
+
+```python
+from blendgen.renderers import EeveeBackend
+
+backend = EeveeBackend(samples=16)
+```
+
+Color, alpha, depth, normal, and optical-flow pass classes work with Eevee. The current Blender 5 backend rejects material-index passes because Eevee does not expose that pass reliably. This is an early configuration error, not a partially rendered dataset.
+
+## Choose by required semantics
+
+| Requirement | Recommended backend |
+| --- | --- |
+| Material IDs | Cycles |
+| Fast color/depth iteration | Eevee |
+| GPU production on NVIDIA | Cycles GPU |
+| Apple Silicon Docker | Cycles CPU or Eevee |
+
+Do not switch engines only for speed without comparing the resulting imagery and semantic passes on representative frames.

@@ -1,0 +1,22 @@
+{
+  "title": "BlendGen",
+  "pages": [
+    "index",
+    "---Getting started---",
+    "getting-started/installation",
+    "getting-started/first-dataset",
+    "---Core guides---",
+    "guides/architecture",
+    "guides/render-backends",
+    "guides/render-passes",
+    "guides/callbacks-and-attributes",
+    "guides/dataset-output",
+    "guides/validation",
+    "guides/blender-5",
+    "---Reference---",
+    "api/index",
+    "api/generated",
+    "[Examples](https://github.com/juniorxsound/BlendGen/tree/main/examples)",
+    "[Notebooks](https://github.com/juniorxsound/BlendGen/tree/main/notebooks)"
+  ]
+}

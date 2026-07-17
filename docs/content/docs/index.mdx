@@ -1,0 +1,41 @@
+---
+title: BlendGen
+description: Generate synchronized synthetic computer-vision datasets with Blender.
+icon: Sparkles
+---
+
+BlendGen is a Python rendering pipeline for turning Blender scenes into reproducible machine-learning datasets. Declare the render engine, semantic passes, output formats, frame range, and annotations once; BlendGen renders each frame once and records the resulting files in a dataset index.
+
+## What it gives you
+
+- **Synchronized outputs:** color, alpha, metric depth, normals, optical flow, and material IDs stay aligned frame by frame.
+- **Explicit render engines:** configure Cycles for production or Eevee for faster supported workloads.
+- **Headless operation:** run the same dataset file locally, in Docker, or on a GPU host without opening Blender's UI.
+- **Procedural annotations:** callbacks can move scene objects and attach 2D/3D boxes, poses, camera matrices, or custom metadata.
+- **Verified manifests:** a pass is recorded only after its expected file exists.
+
+## The shortest path
+
+1. [Build the Docker image](/docs/getting-started/installation).
+2. [Render your first dataset](/docs/getting-started/first-dataset).
+3. Choose [passes and formats](/docs/guides/render-passes).
+4. Add [callbacks and annotations](/docs/guides/callbacks-and-attributes).
+5. [Validate a smoke test](/docs/guides/validation) before a long run.
+
+## Mental model
+
+```text
+Blender scene
+    ↓
+Renderer(backend, camera, passes, output policy)
+    ↓
+Session(frame range, callbacks)
+    ↓
+one render per frame → pass files + Dataset index
+```
+
+The `Session` owns iteration. The `Renderer` owns Blender configuration and pass output. The `Dataset` owns the machine-readable index. Keep those responsibilities separate; in particular, do not call Blender's renderer once per pass.
+
+## Documentation for people and agents
+
+Every page is also available as Markdown by appending `.md` to its documentation URL. The complete site is indexed at [`/llms.txt`](/llms.txt), with all page content at [`/llms-full.txt`](/llms-full.txt).

@@ -1,0 +1,178 @@
+---
+title: session
+description: Generated Python API reference for blendgen.session.
+---
+
+# `blendgen.session`
+
+> This page is generated from the Python source by `npm run generate:api`. Do not edit it by hand.
+
+BlendGen - Written by @juniorxsound &lt;https://orfleisher.com&gt;
+
+## `Session`
+
+[Class source](https://github.com/juniorxsound/BlendGen/blob/main/blendgen/session.py#L15)
+
+```python
+class Session
+```
+
+A session wrapper class used to manage dataset creation
+
+### `Session.__init__`
+
+[Method source](https://github.com/juniorxsound/BlendGen/blob/main/blendgen/session.py#L18)
+
+```python
+def __init__(self, renderer=None, dataset=None, output_dir=f'{getcwd()}/data/toy_dataset/', frame_start=0, frame_length=1, passes=None, on_before_new_frame=None, on_after_new_frame=None, on_start=None, on_complete=None)
+```
+
+Creates a session wrapper class used for a rendering session
+
+Keyword Arguments:
+    renderer &#123;Renderer&#125; -- BlendGen Renderer instace (default: &#123;None&#125;)
+    dataset &#123;Dataset&#125; -- BlendGen Dataset instace (default: &#123;None&#125;)
+    output_dir &#123;str&#125; -- Dataset base path                 (default: &#123;"data/toy_dataset/"&#125;)
+    frame_length &#123;int&#125; -- Length of sequence to render (default: &#123;1&#125;)
+    passes &#123;list&#125; -- A list of render passes (default: &#123;None&#125;)
+    on_before_new_frame &#123;function&#125; -- Callback called before a                 new frame is rendered (default: &#123;None&#125;)
+    on_after_new_frame &#123;function&#125; -- Callback called after a                 new frame is rendered (default: &#123;None&#125;)
+    on_start &#123;function&#125; -- Callback called before a                 dataset is rendered (default: &#123;None&#125;)
+    on_complete &#123;function&#125; -- Callback called after a                 dataset is rendered (default: &#123;None&#125;)
+
+### `Session.run`
+
+[Method source](https://github.com/juniorxsound/BlendGen/blob/main/blendgen/session.py#L80)
+
+```python
+def run(self)
+```
+
+Run the session and capture the dataset
+
+### `Session.update`
+
+[Method source](https://github.com/juniorxsound/BlendGen/blob/main/blendgen/session.py#L120)
+
+```python
+def update(self)
+```
+
+Force-update data blocks, replacing Blender 2.7's ``scene.update``.
+
+### `Session.on_complete`
+
+[Property source](https://github.com/juniorxsound/BlendGen/blob/main/blendgen/session.py#L125)
+
+```python
+def on_complete(self)
+```
+
+Getter for the on complete callback
+
+Returns:
+    :function: -- The function assigned or None
+
+### `Session.on_start`
+
+[Property source](https://github.com/juniorxsound/BlendGen/blob/main/blendgen/session.py#L134)
+
+```python
+def on_start(self)
+```
+
+Getter for the on start callback
+
+Returns:
+    :function: -- The function assigned or None
+
+### `Session.on_before_new_frame`
+
+[Property source](https://github.com/juniorxsound/BlendGen/blob/main/blendgen/session.py#L143)
+
+```python
+def on_before_new_frame(self)
+```
+
+Getter for the on before a new frame is rendered callback
+
+Returns:
+    :function: -- The function assigned or None
+
+### `Session.on_after_new_frame`
+
+[Property source](https://github.com/juniorxsound/BlendGen/blob/main/blendgen/session.py#L152)
+
+```python
+def on_after_new_frame(self)
+```
+
+Getter for the on after a new frame is rendered callback
+
+Returns:
+    :function: -- The function assigned or None
+
+### `Session.on_complete.setter`
+
+[Setter source](https://github.com/juniorxsound/BlendGen/blob/main/blendgen/session.py#L161)
+
+```python
+def on_complete(self, callback)
+```
+
+A setter for the on complete callback
+
+Arguments:
+    callback &#123;function&#125; -- The callback to call when completed
+
+### `Session.on_start.setter`
+
+[Setter source](https://github.com/juniorxsound/BlendGen/blob/main/blendgen/session.py#L170)
+
+```python
+def on_start(self, callback)
+```
+
+A setter for the on start callback
+
+Arguments:
+    callback &#123;function&#125; -- The callback to call when started
+
+### `Session.on_before_new_frame.setter`
+
+[Setter source](https://github.com/juniorxsound/BlendGen/blob/main/blendgen/session.py#L179)
+
+```python
+def on_before_new_frame(self, callback)
+```
+
+A setter for the on new frame callback
+
+Arguments:
+    callback &#123;function&#125; -- The callback to call before every new frame
+
+### `Session.on_after_new_frame.setter`
+
+[Setter source](https://github.com/juniorxsound/BlendGen/blob/main/blendgen/session.py#L188)
+
+```python
+def on_after_new_frame(self, callback)
+```
+
+A setter for the after new frame callback
+
+Arguments:
+    callback &#123;function&#125; -- The callback to call after every new frame
+
+### `Session.info`
+
+[Property source](https://github.com/juniorxsound/BlendGen/blob/main/blendgen/session.py#L197)
+
+```python
+def info(self)
+```
+
+Get a pretty printed ASCII table with the session info
+
+Returns:
+    str -- The ASCII table string

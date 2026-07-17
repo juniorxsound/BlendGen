@@ -1,0 +1,66 @@
+---
+title: renderers.eevee
+description: Generated Python API reference for blendgen.renderers.eevee.
+---
+
+# `blendgen.renderers.eevee`
+
+> This page is generated from the Python source by `npm run generate:api`. Do not edit it by hand.
+
+Eevee renderer configuration.
+
+## `EeveeBackend`
+
+[Class source](https://github.com/juniorxsound/BlendGen/blob/main/blendgen/renderers/eevee.py#L10)
+
+```python
+class EeveeBackend
+```
+
+Configuration for Blender's Eevee engine.
+
+### Values
+
+```python
+samples = 16
+```
+
+### `EeveeBackend.name`
+
+[Property source](https://github.com/juniorxsound/BlendGen/blob/main/blendgen/renderers/eevee.py#L20)
+
+```python
+def name(self)
+```
+
+Return Blender's Eevee engine identifier.
+
+### `EeveeBackend.validate_passes`
+
+[Method source](https://github.com/juniorxsound/BlendGen/blob/main/blendgen/renderers/eevee.py#L24)
+
+```python
+def validate_passes(self, pass_kinds)
+```
+
+Ensure requested passes are reliable in Eevee.
+
+### `EeveeBackend.configure_scene`
+
+[Method source](https://github.com/juniorxsound/BlendGen/blob/main/blendgen/renderers/eevee.py#L31)
+
+```python
+def configure_scene(self, scene, _blender)
+```
+
+Configure Eevee samples for one Blender scene.
+
+### `EeveeBackend.bind_pass`
+
+[Method source](https://github.com/juniorxsound/BlendGen/blob/main/blendgen/renderers/eevee.py#L38)
+
+```python
+def bind_pass(self, pass_kind, view_layer, render_layers)
+```
+
+Enable and resolve one Eevee compositor pass.
