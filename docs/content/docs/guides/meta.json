@@ -5,8 +5,6 @@
     "render-backends",
     "render-passes",
     "callbacks-and-attributes",
-    "dataset-output",
-    "validation",
-    "blender-5"
+    "dataset-output"
   ]
 }

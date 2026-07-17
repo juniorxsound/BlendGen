@@ -10,8 +10,6 @@
     "guides/render-passes",
     "guides/callbacks-and-attributes",
     "guides/dataset-output",
-    "guides/validation",
-    "guides/blender-5",
     "---Reference---",
     "api/index",
     "api/generated",
