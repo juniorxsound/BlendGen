@@ -5,7 +5,7 @@ import unittest
 from blendgen.passes.alpha import AlphaPass
 from blendgen.passes.color import ColorPass
 from blendgen.passes.depth import DepthPass
-from blendgen.passes.index import MaterialIndexPass
+from blendgen.passes.index import MaterialIndexPass, RawMaterialIndexPass
 from blendgen.passes.normal import NormalPass
 from blendgen.passes.opticalflow import OpticalFlowPass
 from blendgen.renderers import (CyclesBackend, CyclesDevice, EeveeBackend,
@@ -46,3 +46,5 @@ class TestBackendConfiguration(unittest.TestCase):
         self.assertEqual(NormalPass().kind, RenderPassKind.NORMAL)
         self.assertEqual(OpticalFlowPass().kind, RenderPassKind.OPTICAL_FLOW)
         self.assertEqual(MaterialIndexPass().kind, RenderPassKind.MATERIAL_INDEX)
+        self.assertEqual(RawMaterialIndexPass().kind,
+                         RenderPassKind.MATERIAL_INDEX)

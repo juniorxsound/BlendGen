@@ -1,10 +1,13 @@
 """Shared render orchestration for all Blender render backends."""
 
 from enum import Enum
+from os import makedirs, remove
+from os.path import exists, join
 
 import bpy
 
 from blendgen.compositor import (compositor_tree, convert_temporary_output,
+                                 extract_multilayer_output,
                                  set_frame_filename)
 from blendgen.renderers import CyclesBackend, RenderPassKind
 
@@ -70,6 +73,20 @@ class Renderer:
 
         compositor = compositor_tree(self.__active_scene, bpy)
         self.__render_layers = compositor.nodes.new("CompositorNodeRLayers")
+        # Blender skips compositor evaluation when the tree has no active
+        # final output, even when File Output nodes are present. Blender 5's
+        # scene compositor is a node group and uses Group Output; older
+        # versions use the legacy Composite node.
+        try:
+            final_output = compositor.nodes.new("CompositorNodeComposite")
+            final_input = final_output.inputs["Image"]
+        except RuntimeError:
+            compositor.interface.new_socket(
+                name="Image", in_out="OUTPUT", socket_type="NodeSocketColor")
+            final_output = compositor.nodes.new("NodeGroupOutput")
+            final_output.is_active_output = True
+            final_input = final_output.inputs["Image"]
+        compositor.links.new(self.__render_layers.outputs["Image"], final_input)
         view_layer = self.__active_scene.view_layers[0]
         for render_pass in self.__passes:
             render_pass.init(self.__active_scene, self.__output_base_path, background)
@@ -86,7 +103,14 @@ class Renderer:
                 if not hasattr(output_node, "base_path"):
                     set_frame_filename(output_node, current_frame)
 
-            bpy.ops.render.render(write_still=True)
+            bpy.ops.render.render()
+            direct_outputs_exist = all(
+                exists(self.__direct_output_path(render_pass, current_frame))
+                for render_pass in self.__passes
+            )
+            if not direct_outputs_exist:
+                return self.__extract_render_result(current_frame)
+
             for render_pass in self.__passes:
                 file_name = f"/Image{current_frame:0>4}{render_pass.file_extension}"
                 output_node = render_pass.output_node
@@ -95,8 +119,66 @@ class Renderer:
                     convert_temporary_output(
                         output_node, render_pass.render_path + file_name,
                         display_transform=render_pass.display_transform)
-                paths.append({render_pass.type: render_pass.render_path + file_name})
+                output_path = render_pass.render_path + file_name
+                if not exists(output_path):
+                    raise RuntimeError(
+                        f"Render pass did not create its expected file: {output_path}")
+                paths.append({render_pass.type: output_path})
         return paths
+
+    @staticmethod
+    def __direct_output_path(render_pass, current_frame):
+        output_node = render_pass.output_node
+        if not hasattr(output_node, "base_path"):
+            return join(output_node.directory,
+                        output_node.file_name + ".exr")
+        return (render_pass.render_path
+                + f"/Image{current_frame:0>4}{render_pass.file_extension}")
+
+    def __extract_render_result(self, current_frame):
+        """Split the existing Render Result when File Output nodes emit nothing."""
+        for render_pass in self.__passes:
+            if len(render_pass.ops) != 1:
+                raise RuntimeError(
+                    "Multilayer fallback only supports raw semantic passes; "
+                    f"{render_pass.type} contains compositor transformations")
+
+        temporary_dir = join(self.__output_base_path, ".blendgen")
+        makedirs(temporary_dir, exist_ok=True)
+        multilayer_path = join(
+            temporary_dir, f"Image{current_frame:0>4}.exr")
+        settings = self.__active_scene.render.image_settings
+        original = (settings.file_format, settings.color_mode,
+                    settings.color_depth, settings.exr_codec)
+        try:
+            settings.file_format = "OPEN_EXR_MULTILAYER"
+            settings.color_mode = "RGBA"
+            settings.color_depth = "32"
+            settings.exr_codec = "ZIP"
+            bpy.data.images["Render Result"].save_render(
+                multilayer_path, scene=self.__active_scene)
+            if not exists(multilayer_path):
+                raise RuntimeError(
+                    f"Blender did not create fallback output: {multilayer_path}")
+
+            paths = []
+            for render_pass in self.__passes:
+                target_path = (render_pass.render_path
+                               + f"/Image{current_frame:0>4}"
+                               + render_pass.file_extension)
+                extract_multilayer_output(
+                    multilayer_path, render_pass.kind, target_path,
+                    display_transform=render_pass.display_transform)
+                if not exists(target_path):
+                    raise RuntimeError(
+                        f"Fallback did not create expected pass: {target_path}")
+                paths.append({render_pass.type: target_path})
+            return paths
+        finally:
+            settings.file_format, settings.color_mode, settings.color_depth, \
+                settings.exr_codec = original
+            if exists(multilayer_path):
+                remove(multilayer_path)
 
     @property
     def backend(self):

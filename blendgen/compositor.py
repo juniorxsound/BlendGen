@@ -9,6 +9,11 @@ except ImportError:
     oiio = None
 
 try:
+    import numpy as np
+except ImportError:
+    np = None
+
+try:
     import bpy
 except ImportError:
     bpy = None
@@ -71,3 +76,47 @@ def convert_temporary_output(output_node, target_path, display_transform=False):
         raise RuntimeError(
             f"Could not convert compositor output: {image.geterror()}")
     remove(source_path)
+
+
+MULTILAYER_CHANNEL_SUFFIXES = {
+    "color": ("Combined.R", "Combined.G", "Combined.B", "Combined.A"),
+    "alpha": ("Combined.A",),
+    "depth": ("Depth.Z",),
+    "normal": ("Normal.X", "Normal.Y", "Normal.Z"),
+    "optical_flow": ("Vector.X", "Vector.Y", "Vector.Z", "Vector.W"),
+    "material_index": ("Material Index.X",),
+}
+
+
+def extract_multilayer_output(multilayer_path, pass_kind, target_path,
+                              display_transform=False):
+    """Write one raw semantic pass from a multilayer EXR to ``target_path``."""
+    if oiio is None or np is None:
+        raise RuntimeError(
+            "OpenImageIO and NumPy are required to extract multilayer output")
+
+    image_input = oiio.ImageInput.open(multilayer_path)
+    if image_input is None:
+        raise RuntimeError(f"Could not open multilayer output: {multilayer_path}")
+    try:
+        spec = image_input.spec()
+        channel_names = list(spec.channelnames)
+        indices = []
+        for suffix in MULTILAYER_CHANNEL_SUFFIXES[pass_kind.value]:
+            matches = [index for index, name in enumerate(channel_names)
+                       if name.endswith(suffix)]
+            if len(matches) != 1:
+                raise RuntimeError(
+                    f"Expected one channel ending in {suffix!r}, found {matches}")
+            indices.append(matches[0])
+        pixels = image_input.read_image()
+    finally:
+        image_input.close()
+
+    output = oiio.ImageBuf(np.ascontiguousarray(pixels[..., indices]))
+    if display_transform:
+        output = oiio.ImageBufAlgo.colorconvert(
+            output, "lin_rec709_scene", "sRGB")
+    if not output.write(target_path):
+        raise RuntimeError(
+            f"Could not write extracted pass {target_path}: {output.geterror()}")

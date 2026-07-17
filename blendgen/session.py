@@ -19,6 +19,7 @@ class Session:
                  renderer=None,
                  dataset=None,
                  output_dir=f"{getcwd()}/data/toy_dataset/",
+                 frame_start=0,
                  frame_length=1,
                  passes=None,
                  on_before_new_frame=None,
@@ -44,7 +45,13 @@ class Session:
                 dataset is rendered (default: {None})
         """
         self.__output_dir = output_dir
+        self.__frame_start = frame_start
         self.__frame_length = frame_length
+
+        if not isinstance(frame_start, int):
+            raise ValueError("frame_start must be an integer")
+        if not isinstance(frame_length, int) or frame_length <= 0:
+            raise ValueError("frame_length must be a positive integer")
 
         # Save the dependency graph which needs to be evaluated for matrix updates
         self.__depsgraph = bpy.context.evaluated_depsgraph_get()
@@ -78,7 +85,8 @@ class Session:
             self.__on_start()
 
         # Iterate over all frames in sequence (request in Session constructor)
-        for frame in range(self.__frame_length):
+        for frame in range(self.__frame_start,
+                           self.__frame_start + self.__frame_length):
             # Update the frame in the timeline
             bpy.context.scene.frame_set(frame)
 

@@ -25,3 +25,12 @@ class MaterialIndexPass(BaseRenderPass):
 
         # Connect all the nodes
         self.connect_nodes(source_socket)
+
+
+class RawMaterialIndexPass(BaseRenderPass):
+    """Write Blender's unmodified per-pixel material index pass."""
+
+    kind = RenderPassKind.MATERIAL_INDEX
+
+    def __init__(self, prefix="", output_type=ImageOutputType.EXR):
+        super().__init__(prefix, output_type)

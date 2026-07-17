@@ -1,0 +1,4 @@
+interface:
+  display_name: "BlendGen Rendering"
+  short_description: "Author and run verified BlendGen datasets"
+  default_prompt: "Use $blendgen-rendering to write and run a verified multipass BlendGen dataset."

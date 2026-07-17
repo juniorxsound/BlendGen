@@ -71,11 +71,20 @@ class CyclesBackend:
         except KeyError as error:
             raise RuntimeError("Cycles GPU support is not available") from error
         preferences.get_devices()
+        selected_device_type = None
         for device_type in ("CUDA", "OPTIX", "HIP", "METAL", "ONEAPI"):
             try:
                 preferences.compute_device_type = device_type
+                selected_device_type = device_type
                 break
             except TypeError:
                 continue
+        if selected_device_type is None:
+            raise RuntimeError("Cycles did not expose a supported GPU backend")
+        enabled = 0
         for device in preferences.devices:
-            device.use = True
+            device.use = device.type == selected_device_type
+            enabled += int(device.use)
+        if enabled == 0:
+            raise RuntimeError(
+                f"Cycles exposed no {selected_device_type} render devices")
