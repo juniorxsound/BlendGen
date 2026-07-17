@@ -19,7 +19,15 @@ npm run types:check
 npm run build
 ```
 
-The build uses webpack because it is deterministic in constrained and containerized build environments. Fumadocs and Next.js still provide static generation for the content routes.
+Next.js 16 uses Turbopack for both development and production builds. Fumadocs and Next.js statically generate the content routes during production builds.
+
+## Vercel deployment
+
+Configure the Vercel project's **Root Directory** as `docs`. The checked-in `vercel.json` selects the Next.js framework and explicitly sets `.next` as the build output, overriding any stale `public` Output Directory setting in the Vercel dashboard.
+
+The `public` directory is reserved for source assets that should be served unchanged. It is not the output directory for a Next.js application and is not required when there are no such assets.
+
+Vercel Web Analytics is mounted in the root layout. Enable Web Analytics for the project in the Vercel dashboard, deploy, and visit the site to begin collecting page views.
 
 ## Generated Python API reference
 
