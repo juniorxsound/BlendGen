@@ -10,7 +10,7 @@ npm install
 npm run dev
 ```
 
-Open <http://localhost:3000/docs>.
+Open <http://localhost:3000>.
 
 ## Validation
 
@@ -41,5 +41,5 @@ The generator parses the public modules listed in `scripts/generate_api_docs.py`
 
 - `/llms.txt` is the page-tree index.
 - `/llms-full.txt` combines the processed Markdown for every documentation page.
-- `/docs/<path>.md` returns the processed Markdown for a single page.
-- A request to `/docs/<path>` with a Markdown-preferred `Accept` header receives the same Markdown representation.
+- `/<path>.md` returns the processed Markdown for a single page.
+- A request to `/<path>` with a Markdown-preferred `Accept` header receives the same Markdown representation.

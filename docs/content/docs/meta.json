@@ -1,7 +1,6 @@
 {
   "title": "BlendGen",
   "pages": [
-    "index",
     "---Getting started---",
     "getting-started/installation",
     "getting-started/first-dataset",

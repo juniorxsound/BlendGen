@@ -5,8 +5,8 @@ export function baseOptions(): BaseLayoutProps {
     nav: { title: 'BlendGen' },
     githubUrl: 'https://github.com/juniorxsound/BlendGen',
     links: [
-      { text: 'Guides', url: '/docs/guides' },
-      { text: 'API', url: '/docs/api' },
+      { text: 'Guides', url: '/guides' },
+      { text: 'API', url: '/api' },
     ],
   };
 }

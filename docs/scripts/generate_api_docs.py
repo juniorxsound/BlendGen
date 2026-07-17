@@ -13,6 +13,7 @@ DOCS_ROOT = Path(__file__).resolve().parents[1]
 REPO_ROOT = DOCS_ROOT.parent
 OUTPUT_ROOT = DOCS_ROOT / "content" / "docs" / "api" / "generated"
 SOURCE_URL = "https://github.com/juniorxsound/BlendGen/blob/main"
+AUTHOR_BANNER = "BlendGen - Written by @juniorxsound <https://orfleisher.com>"
 
 PUBLIC_MODULES = (
     "blendgen.session",
@@ -60,6 +61,13 @@ def escape_mdx(value: str) -> str:
             .replace(">", "&gt;")
             .replace("{", "&#123;")
             .replace("}", "&#125;"))
+
+
+def clean_module_doc(value: str) -> str:
+    """Remove repository attribution banners from generated module prose."""
+    return "\n".join(
+        line for line in value.splitlines() if line.strip() != AUTHOR_BANNER
+    ).strip()
 
 
 def signature(node: ast.FunctionDef | ast.AsyncFunctionDef) -> str:
@@ -132,8 +140,16 @@ def source_link(relative_path: Path, line: int) -> str:
     return f"{SOURCE_URL}/{relative_path.as_posix()}#L{line}"
 
 
+def write_if_changed(path: Path, content: str) -> None:
+    """Avoid invalidating the docs compiler when generated output is unchanged."""
+    if path.exists() and path.read_text(encoding="utf-8") == content:
+        return
+    path.write_text(content, encoding="utf-8")
+
+
 def render(module: str, relative_path: Path, module_doc: str, symbols: list[Symbol]) -> str:
     title = module.removeprefix("blendgen.")
+    module_doc = clean_module_doc(module_doc)
     lines = [
         "---",
         f"title: {title}",
@@ -141,8 +157,6 @@ def render(module: str, relative_path: Path, module_doc: str, symbols: list[Symb
         "---",
         "",
         f"# `{module}`",
-        "",
-        "> This page is generated from the Python source by `npm run generate:api`. Do not edit it by hand.",
         "",
         escape_mdx(module_doc) if module_doc else f"Public symbols exposed by `{module}`.",
         "",
@@ -190,9 +204,9 @@ def main() -> None:
         tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
         name = module.removeprefix("blendgen.").replace(".", "-")
         output = OUTPUT_ROOT / f"{name}.mdx"
-        output.write_text(
+        write_if_changed(
+            output,
             render(module, relative_path, ast.get_docstring(tree, clean=True) or "", public_symbols(tree)),
-            encoding="utf-8",
         )
         expected.add(output)
         page_names.append(name)
@@ -201,9 +215,9 @@ def main() -> None:
         if stale not in expected:
             stale.unlink()
 
-    (OUTPUT_ROOT / "meta.json").write_text(
+    write_if_changed(
+        OUTPUT_ROOT / "meta.json",
         json.dumps({"title": "Generated modules", "pages": page_names}, indent=2) + "\n",
-        encoding="utf-8",
     )
     print(f"Generated {len(page_names)} API reference pages in {OUTPUT_ROOT}")
 

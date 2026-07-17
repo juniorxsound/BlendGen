@@ -1,10 +1,20 @@
 ---
 title: BlendGen
 description: Generate synchronized synthetic computer-vision datasets with Blender.
-icon: Sparkles
 ---
 
+import Image from 'next/image';
+import cover from '../../assets/cover.gif';
+
 BlendGen is a Python rendering pipeline for turning Blender scenes into reproducible machine-learning datasets. Declare the render engine, semantic passes, output formats, frame range, and annotations once; BlendGen renders each frame once and records the resulting files in a dataset index.
+
+<Image
+  src={cover}
+  alt="A grid of synthetic scenes and render passes generated with BlendGen"
+  className="not-prose my-8 w-full rounded-xl border object-cover"
+  priority
+  unoptimized
+/>
 
 ## What it gives you
 
@@ -16,25 +26,11 @@ BlendGen is a Python rendering pipeline for turning Blender scenes into reproduc
 
 ## The shortest path
 
-1. [Build the Docker image](/docs/getting-started/installation).
-2. [Render your first dataset](/docs/getting-started/first-dataset).
-3. Choose [passes and formats](/docs/guides/render-passes).
-4. Add [callbacks and annotations](/docs/guides/callbacks-and-attributes).
-5. [Validate a smoke test](/docs/guides/validation) before a long run.
-
-## Mental model
-
-```text
-Blender scene
-    ↓
-Renderer(backend, camera, passes, output policy)
-    ↓
-Session(frame range, callbacks)
-    ↓
-one render per frame → pass files + Dataset index
-```
-
-The `Session` owns iteration. The `Renderer` owns Blender configuration and pass output. The `Dataset` owns the machine-readable index. Keep those responsibilities separate; in particular, do not call Blender's renderer once per pass.
+1. [Build the Docker image](/getting-started/installation).
+2. [Render your first dataset](/getting-started/first-dataset).
+3. Choose [passes and formats](/guides/render-passes).
+4. Add [callbacks and annotations](/guides/callbacks-and-attributes).
+5. [Validate a smoke test](/guides/validation) before a long run.
 
 ## Documentation for people and agents
 

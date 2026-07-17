@@ -25,12 +25,11 @@ html {
 
 body {
   font-feature-settings: 'rlig' 1, 'calt' 1, 'ss01' 1;
-  background-image:
-    linear-gradient(to right, color-mix(in srgb, var(--color-fd-foreground) 3%, transparent) 1px, transparent 1px),
-    linear-gradient(to bottom, color-mix(in srgb, var(--color-fd-foreground) 3%, transparent) 1px, transparent 1px),
-    radial-gradient(circle at 50% -10%, color-mix(in srgb, var(--color-fd-foreground) 7%, transparent), transparent 34rem);
-  background-size: 32px 32px, 32px 32px, auto;
-  background-attachment: fixed;
+  background-color: color-mix(
+    in srgb,
+    var(--color-fd-background) 96%,
+    var(--color-fd-foreground) 4%
+  );
 }
 
 article :is(h1, h2, h3, h4) {
@@ -66,14 +65,7 @@ article :is(p, li) {
   outline-offset: 2px;
 }
 
-/* Keep authored assets and syntax highlighting inside the monochrome system. */
-img,
-.shiki {
+/* Keep authored imagery inside the monochrome system. */
+img {
   filter: grayscale(1);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  body {
-    background-attachment: scroll;
-  }
 }
