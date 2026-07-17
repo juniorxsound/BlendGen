@@ -66,6 +66,6 @@ article :is(p, li) {
 }
 
 /* Keep authored imagery inside the monochrome system. */
-img {
+img:not([data-preserve-color]) {
   filter: grayscale(1);
 }

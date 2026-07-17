@@ -56,7 +56,8 @@ def display_doc(node: ast.AST) -> str:
 
 def escape_mdx(value: str) -> str:
     """Escape Python prose that MDX would otherwise interpret as JSX."""
-    return (value.replace("&", "&amp;")
+    return (value.replace("—", "-")
+            .replace("&", "&amp;")
             .replace("<", "&lt;")
             .replace(">", "&gt;")
             .replace("{", "&#123;")

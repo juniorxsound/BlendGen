@@ -78,8 +78,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug?: st
   if (!page) notFound();
   const isHome = page.url === '/';
   const title = isHome
-    ? 'BlendGen — Synthetic datasets with Blender'
-    : `${page.data.title} — BlendGen Docs`;
+    ? 'BlendGen - Synthetic datasets with Blender'
+    : `${page.data.title} - BlendGen Docs`;
   const description = page.data.description ?? SITE_DESCRIPTION;
 
   return {
@@ -98,7 +98,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug?: st
           url: '/opengraph-image',
           width: 1200,
           height: 630,
-          alt: `${page.data.title} — BlendGen documentation`,
+          alt: `${page.data.title} - BlendGen documentation`,
         },
       ],
     },

@@ -9,8 +9,8 @@ import './global.css';
 export const metadata: Metadata = {
   metadataBase: SITE_URL,
   title: {
-    default: 'BlendGen — Synthetic datasets with Blender',
-    template: '%s — BlendGen Docs',
+    default: 'BlendGen - Synthetic datasets with Blender',
+    template: '%s - BlendGen Docs',
   },
   description: SITE_DESCRIPTION,
   applicationName: SITE_NAME,
@@ -35,20 +35,20 @@ export const metadata: Metadata = {
     locale: 'en_US',
     url: '/',
     siteName: SITE_NAME,
-    title: 'BlendGen — Synthetic datasets with Blender',
+    title: 'BlendGen - Synthetic datasets with Blender',
     description: SITE_DESCRIPTION,
     images: [
       {
         url: '/opengraph-image',
         width: 1200,
         height: 630,
-        alt: 'BlendGen documentation — synthetic computer-vision datasets with Blender',
+        alt: 'BlendGen documentation - synthetic computer-vision datasets with Blender',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'BlendGen — Synthetic datasets with Blender',
+    title: 'BlendGen - Synthetic datasets with Blender',
     description: SITE_DESCRIPTION,
     images: ['/opengraph-image'],
   },
