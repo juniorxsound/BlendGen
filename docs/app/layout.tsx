@@ -39,10 +39,18 @@ export const metadata: Metadata = {
     description: SITE_DESCRIPTION,
     images: [
       {
-        url: '/opengraph-image',
-        width: 1200,
-        height: 630,
-        alt: 'BlendGen documentation - synthetic computer-vision datasets with Blender',
+        url: '/media/character-dataset-social.gif',
+        width: 800,
+        height: 300,
+        alt: 'Animated BlendGen color, depth, optical flow, normals, alpha, and pose outputs',
+        type: 'image/gif',
+      },
+      {
+        url: '/media/character-dataset-poster.jpg',
+        width: 1728,
+        height: 648,
+        alt: 'BlendGen color, depth, optical flow, normals, alpha, and pose outputs',
+        type: 'image/jpeg',
       },
     ],
   },
@@ -50,7 +58,10 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'BlendGen - Synthetic datasets with Blender',
     description: SITE_DESCRIPTION,
-    images: ['/opengraph-image'],
+    images: [
+      '/media/character-dataset-social.gif',
+      '/media/character-dataset-poster.jpg',
+    ],
   },
   robots: {
     index: true,

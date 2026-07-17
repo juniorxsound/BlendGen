@@ -95,10 +95,18 @@ export async function generateMetadata({ params }: { params: Promise<{ slug?: st
       description,
       images: [
         {
-          url: '/opengraph-image',
-          width: 1200,
-          height: 630,
-          alt: `${page.data.title} - BlendGen documentation`,
+          url: '/media/character-dataset-social.gif',
+          width: 800,
+          height: 300,
+          alt: `Animated BlendGen dataset outputs - ${page.data.title}`,
+          type: 'image/gif',
+        },
+        {
+          url: '/media/character-dataset-poster.jpg',
+          width: 1728,
+          height: 648,
+          alt: `BlendGen dataset outputs - ${page.data.title}`,
+          type: 'image/jpeg',
         },
       ],
     },
@@ -106,7 +114,10 @@ export async function generateMetadata({ params }: { params: Promise<{ slug?: st
       card: 'summary_large_image',
       title,
       description,
-      images: ['/opengraph-image'],
+      images: [
+        '/media/character-dataset-social.gif',
+        '/media/character-dataset-poster.jpg',
+      ],
     },
   };
 }

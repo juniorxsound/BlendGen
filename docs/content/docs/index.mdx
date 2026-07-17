@@ -3,19 +3,25 @@ title: BlendGen
 description: Generate synchronized synthetic computer-vision datasets with Blender.
 ---
 
-import Image from 'next/image';
-import cover from '../../assets/cover.gif';
-
 BlendGen is a Python rendering pipeline for turning Blender scenes into reproducible machine-learning datasets. Declare the render engine, semantic passes, output formats, frame range, and annotations once; BlendGen renders each frame once and records the resulting files in a dataset index.
 
-<Image
-  src={cover}
-  alt="A grid of synthetic scenes and render passes generated with BlendGen"
+<video
+  autoPlay
+  loop
+  muted
+  playsInline
+  preload="auto"
+  poster="/media/character-dataset-poster.jpg"
+  aria-label="Animated grid of synthetic scenes and render passes generated with BlendGen"
   className="not-prose my-8 w-full rounded-xl border object-cover"
-  data-preserve-color
-  priority
-  unoptimized
-/>
+>
+  <source src="/media/character-dataset-loop.mp4" type="video/mp4" />
+  <img
+    src="/media/character-dataset-poster.jpg"
+    alt="A grid of synthetic scenes and render passes generated with BlendGen"
+    data-preserve-color
+  />
+</video>
 
 ## What it gives you
 
