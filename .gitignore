@@ -11,3 +11,10 @@ __pycache__/
 
 # Jupyter Notebook checkpoints
 .ipynb_checkpoints/
+
+# Fumadocs / Next.js build artifacts
+docs/.next/
+docs/.source/
+docs/node_modules/
+docs/next-env.d.ts
+docs/tsconfig.tsbuildinfo

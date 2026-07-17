@@ -1,0 +1,34 @@
+---
+title: Render passes and formats
+description: Select semantic passes, file types, and background behavior without losing information.
+---
+
+## Pass matrix
+
+| Pass | Typical format | Meaning |
+| --- | --- | --- |
+| `ColorPass` | PNG or EXR | Combined scene color; EXR preserves scene-linear values |
+| `AlphaPass` | PNG or EXR | Combined coverage alpha |
+| `DepthPass` | EXR | Camera-space metric Z with a large background sentinel |
+| `NormalPass` | EXR | Signed XYZ surface normal components |
+| `OpticalFlowPass` | EXR | Signed XYZW Blender vector pass |
+| `RawMaterialIndexPass` | EXR | Full integer material-ID field stored in a float channel |
+| `MaterialIndexPass(index=...)` | PNG or EXR | A mask for one selected material ID |
+
+`ImageOutputType` supports `PNG`, `JPEG`, `TIFF`, and `EXR`. Use display formats for display-oriented color and masks. Use EXR whenever values are signed, high-dynamic-range, or metric.
+
+## Raw data versus visualization
+
+Mapping depth into `[0, 1]`, inverting a pass, or colorizing flow can be useful for inspection, but those transforms change the data. Keep authoritative training outputs lossless and generate previews separately.
+
+## Alpha is not depth
+
+`Background.ALPHA` makes film transparent and gives useful Combined alpha, but removes the visible world from Combined color. `Background.SKY` preserves the world and normally makes Combined alpha opaque. Depth indicates geometric distance; it is not a substitute for volumetric transmittance or authored transparency.
+
+## Material-ID semantics
+
+Native material indices follow authored shading coverage. Transparent, dithered, and volumetric materials may alternate between exact ID zero and positive IDs. Rounding, denoising, or inventing a background ID does not correct that semantic boundary. A hard opaque material override is a separate render with different scene semantics.
+
+## Optical-flow boundaries
+
+Flow depends on adjacent animation states. Render guard frames when downstream consumers need centered temporal support at the requested range boundaries. Store all XYZW components losslessly even when a preview uses only XY.

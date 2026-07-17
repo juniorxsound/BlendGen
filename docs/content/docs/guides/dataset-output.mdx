@@ -1,0 +1,35 @@
+---
+title: Dataset output
+description: Understand the index format, frame records, pass paths, and attributes.
+---
+
+`Dataset` stores a name, creation timestamp, and ordered frame records. Each frame contains its timeline index as a string, a list of pass-path mappings, and a list of custom attributes.
+
+```json
+{
+  "name": "My BlendGen dataset",
+  "date": "07/17/2026,12:00:00",
+  "data": [
+    {
+      "index": "1",
+      "passes": [
+        { "ColorPass": "/data/output/color/Image0001.png" },
+        { "DepthPass": "/data/output/depth/Image0001.exr" }
+      ],
+      "attributes": [
+        { "camera_id": "Camera" }
+      ]
+    }
+  ]
+}
+```
+
+The exact pass keys come from each pass class's `type`. Treat recorded file paths as the output contract: a successful manifest entry must point to an existing individual pass file.
+
+## JSON or NPY
+
+Use `DatasetOutputType.JSON` for portable, inspectable metadata. `DatasetOutputType.NPY` serializes the dataset object with NumPy and is Python/NumPy oriented. Image pass files remain separate in both cases.
+
+## Attributes-only runs
+
+`Renderer(render_images=False)` allows a session to iterate frames and save annotations without writing image passes. This is useful only when the intended dataset is genuinely metadata-only; it must not be used to mask missing requested images.

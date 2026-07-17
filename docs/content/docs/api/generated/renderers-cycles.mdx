@@ -1,0 +1,82 @@
+---
+title: renderers.cycles
+description: Generated Python API reference for blendgen.renderers.cycles.
+---
+
+# `blendgen.renderers.cycles`
+
+Cycles renderer configuration.
+
+## `CyclesDevice`
+
+[Class source](https://github.com/juniorxsound/BlendGen/blob/main/blendgen/renderers/cycles.py#L10)
+
+```python
+class CyclesDevice(Enum)
+```
+
+Cycles rendering device choices.
+
+### Values
+
+```python
+CPU = 'CPU'
+GPU = 'GPU'
+```
+
+## `CyclesBackend`
+
+[Class source](https://github.com/juniorxsound/BlendGen/blob/main/blendgen/renderers/cycles.py#L18)
+
+```python
+class CyclesBackend
+```
+
+Configuration for Blender's Cycles render engine.
+
+### Values
+
+```python
+samples = 2
+device = CyclesDevice.CPU
+```
+
+### `CyclesBackend.name`
+
+[Property source](https://github.com/juniorxsound/BlendGen/blob/main/blendgen/renderers/cycles.py#L31)
+
+```python
+def name(self)
+```
+
+Return Blender's Cycles engine identifier.
+
+### `CyclesBackend.validate_passes`
+
+[Method source](https://github.com/juniorxsound/BlendGen/blob/main/blendgen/renderers/cycles.py#L35)
+
+```python
+def validate_passes(self, pass_kinds)
+```
+
+Ensure all requested passes are known to BlendGen.
+
+### `CyclesBackend.configure_scene`
+
+[Method source](https://github.com/juniorxsound/BlendGen/blob/main/blendgen/renderers/cycles.py#L39)
+
+```python
+def configure_scene(self, scene, blender)
+```
+
+Configure Cycles and, when requested, its GPU preferences.
+
+### `CyclesBackend.bind_pass`
+
+[Method source](https://github.com/juniorxsound/BlendGen/blob/main/blendgen/renderers/cycles.py#L47)
+
+```python
+def bind_pass(self, pass_kind, view_layer, render_layers)
+```
+
+Enable and resolve one Cycles compositor pass.

@@ -26,8 +26,32 @@ class Renderer:
                  resolution_percentage=100, resolution_x=1920,
                  resolution_y=1080, output_base_path="data/toy_dataset/",
                  passes=None, render_images=True):
-        if backend is None:
-            backend = CyclesBackend()
+        backend = backend or CyclesBackend()
+        render_passes = list(passes or [])
+        self.__validate_configuration(
+            backend, background, resolution_percentage,
+            resolution_x, resolution_y, render_passes)
+
+        self.__output_base_path = output_base_path
+        self.__active_scene = bpy.context.scene
+        self.__active_camera = bpy.context.scene.camera
+        self.__camera_list = bpy.data.cameras
+        self.__scene_list = bpy.data.scenes
+        self.__passes = render_passes
+        self.__width = resolution_x
+        self.__height = resolution_y
+        self.__render_images = render_images
+        self.__backend = backend
+
+        self.__configure_scenes(
+            backend, background, resolution_percentage,
+            resolution_x, resolution_y)
+        self.__configure_passes(backend, background)
+
+    @staticmethod
+    def __validate_configuration(backend, background, resolution_percentage,
+                                 resolution_x, resolution_y, render_passes):
+        """Validate renderer options before mutating the active Blender file."""
         if not isinstance(background, Background):
             raise ValueError("background must be a Background")
         for name, value in (("resolution_percentage", resolution_percentage),
@@ -35,30 +59,23 @@ class Renderer:
                             ("resolution_y", resolution_y)):
             if not isinstance(value, int) or value <= 0:
                 raise ValueError(f"{name} must be a positive integer")
-        required_backend_methods = ("name", "validate_passes", "configure_scene",
-                                    "bind_pass")
-        if not all(hasattr(backend, method) for method in required_backend_methods):
+
+        required_methods = ("name", "validate_passes", "configure_scene",
+                            "bind_pass")
+        if not all(hasattr(backend, method) for method in required_methods):
             raise ValueError("backend must implement the RenderBackend interface")
 
-        self.__output_base_path = output_base_path
-        self.__active_scene = bpy.context.scene
-        self.__active_camera = bpy.context.scene.camera
-        self.__camera_list = bpy.data.cameras
-        self.__scene_list = bpy.data.scenes
-        self.__passes = list(passes or [])
-        self.__width = resolution_x
-        self.__height = resolution_y
-        self.__render_images = render_images
-        self.__backend = backend
-
         pass_kinds = []
-        for render_pass in self.__passes:
+        for render_pass in render_passes:
             kind = getattr(render_pass, "kind", None)
             if not isinstance(kind, RenderPassKind):
                 raise ValueError("Every render pass must declare a RenderPassKind")
             pass_kinds.append(kind)
         backend.validate_passes(pass_kinds)
 
+    def __configure_scenes(self, backend, background, resolution_percentage,
+                           resolution_x, resolution_y):
+        """Apply shared output settings and backend configuration to scenes."""
         for scene in self.__scene_list:
             scene.use_nodes = True
             scene.unit_settings.system = "METRIC"
@@ -71,8 +88,22 @@ class Renderer:
             scene.render.resolution_y = resolution_y
             backend.configure_scene(scene, bpy)
 
+    def __configure_passes(self, backend, background):
+        """Build the compositor inputs and bind all requested semantic passes."""
         compositor = compositor_tree(self.__active_scene, bpy)
         self.__render_layers = compositor.nodes.new("CompositorNodeRLayers")
+        final_input = self.__create_final_output(compositor)
+        compositor.links.new(self.__render_layers.outputs["Image"], final_input)
+        view_layer = self.__active_scene.view_layers[0]
+        for render_pass in self.__passes:
+            render_pass.init(self.__active_scene, self.__output_base_path, background)
+            source_socket = backend.bind_pass(render_pass.kind, view_layer,
+                                              self.__render_layers)
+            render_pass.create_pass(source_socket)
+
+    @staticmethod
+    def __create_final_output(compositor):
+        """Create the active final output required to evaluate the compositor."""
         # Blender skips compositor evaluation when the tree has no active
         # final output, even when File Output nodes are present. Blender 5's
         # scene compositor is a node group and uses Group Output; older
@@ -86,13 +117,7 @@ class Renderer:
             final_output = compositor.nodes.new("NodeGroupOutput")
             final_output.is_active_output = True
             final_input = final_output.inputs["Image"]
-        compositor.links.new(self.__render_layers.outputs["Image"], final_input)
-        view_layer = self.__active_scene.view_layers[0]
-        for render_pass in self.__passes:
-            render_pass.init(self.__active_scene, self.__output_base_path, background)
-            source_socket = backend.bind_pass(render_pass.kind, view_layer,
-                                              self.__render_layers)
-            render_pass.create_pass(source_socket)
+        return final_input
 
     def render(self, current_frame):
         """Render a frame and return the existing dataset pass-path schema."""

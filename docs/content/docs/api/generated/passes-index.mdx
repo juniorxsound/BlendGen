@@ -1,0 +1,70 @@
+---
+title: passes.index
+description: Generated Python API reference for blendgen.passes.index.
+---
+
+# `blendgen.passes.index`
+
+Public symbols exposed by `blendgen.passes.index`.
+
+## `MaterialIndexPass`
+
+[Class source](https://github.com/juniorxsound/BlendGen/blob/main/blendgen/passes/index.py#L8)
+
+```python
+class MaterialIndexPass(BaseRenderPass)
+```
+
+No description is available yet.
+
+### Values
+
+```python
+kind = RenderPassKind.MATERIAL_INDEX
+```
+
+### `MaterialIndexPass.__init__`
+
+[Method source](https://github.com/juniorxsound/BlendGen/blob/main/blendgen/passes/index.py#L10)
+
+```python
+def __init__(self, prefix='', index=0, output_type=ImageOutputType.PNG, rgb=None)
+```
+
+No description is available yet.
+
+### `MaterialIndexPass.create_pass`
+
+[Method source](https://github.com/juniorxsound/BlendGen/blob/main/blendgen/passes/index.py#L19)
+
+```python
+def create_pass(self, source_socket)
+```
+
+No description is available yet.
+
+## `RawMaterialIndexPass`
+
+[Class source](https://github.com/juniorxsound/BlendGen/blob/main/blendgen/passes/index.py#L30)
+
+```python
+class RawMaterialIndexPass(BaseRenderPass)
+```
+
+Write Blender's unmodified per-pixel material index pass.
+
+### Values
+
+```python
+kind = RenderPassKind.MATERIAL_INDEX
+```
+
+### `RawMaterialIndexPass.__init__`
+
+[Method source](https://github.com/juniorxsound/BlendGen/blob/main/blendgen/passes/index.py#L35)
+
+```python
+def __init__(self, prefix='', output_type=ImageOutputType.EXR)
+```
+
+No description is available yet.

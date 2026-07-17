@@ -1,0 +1,55 @@
+---
+title: Installation
+description: Build and run the maintained BlendGen Docker images.
+---
+
+## Clone and build
+
+```bash
+git clone https://github.com/juniorxsound/BlendGen.git
+cd BlendGen
+make build
+```
+
+`make build` chooses the GPU Dockerfile when `nvidia-smi` is available; otherwise it builds the CPU image. Both use the local tag `blendgen:latest` by default.
+
+Build a specific runtime directly when the automatic choice is not appropriate:
+
+```bash
+docker build --platform linux/amd64 \
+  -f docker/Dockerfile.cpu \
+  -t blendgen:latest .
+```
+
+```bash
+docker build --platform linux/amd64 \
+  -f docker/Dockerfile.gpu \
+  -t blendgen:latest .
+```
+
+## Apple Silicon
+
+Blender 5.1.2's maintained Linux artifact is x86-64, so the project image runs with `--platform linux/amd64` under Docker Desktop emulation. Use `CyclesDevice.CPU`; Docker Desktop on macOS does not provide NVIDIA GPU passthrough.
+
+## Confirm the image
+
+```bash
+docker run --rm --platform linux/amd64 blendgen:latest blender --version
+```
+
+## Mounting a project
+
+BlendGen expects the repository or dataset project at `/data` in the container:
+
+```bash
+docker run --rm \
+  --platform linux/amd64 \
+  -v "$PWD":/data \
+  -w /data \
+  blendgen:latest \
+  blender --background --python-exit-code 1 \
+  /data/examples/blend/character_4_cams.blend \
+  --python /data/examples/simple.py
+```
+
+Add `--gpus all` only with the GPU image on a host where NVIDIA Container Toolkit is configured.

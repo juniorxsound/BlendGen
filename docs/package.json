@@ -1,9 +1,34 @@
 {
-    "dependencies": {
-      "docsify": "^4.10.2",
-      "docsify-cli": "^4.4.0"
-    },
-    "scripts": {
-      "start": "docsify serve ./"
-    }
+  "name": "blendgen-docs",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "generate:api": "python3 scripts/generate_api_docs.py",
+    "dev": "npm run generate:api && next dev",
+    "build": "npm run generate:api && next build",
+    "start": "next start",
+    "types:check": "npm run generate:api && node scripts/typecheck.mjs",
+    "postinstall": "fumadocs-mdx"
+  },
+  "dependencies": {
+    "@vercel/analytics": "^2.0.1",
+    "fumadocs-core": "^16.9.1",
+    "fumadocs-mdx": "^15.0.9",
+    "fumadocs-ui": "^16.9.1",
+    "geist": "^1.7.2",
+    "lucide-react": "^0.468.0",
+    "next": "^16.2.10",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.1.0",
+    "@types/mdx": "^2.0.13",
+    "@types/node": "^24.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "postcss": "^8.5.0",
+    "tailwindcss": "^4.1.0",
+    "typescript": "^5.8.0"
   }
+}

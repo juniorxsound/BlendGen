@@ -1,0 +1,19 @@
+---
+title: Getting started
+description: Build BlendGen, choose a runtime, and produce a first verified frame.
+---
+
+BlendGen runs inside Blender's Python runtime. The maintained Docker images package Blender 5.1.2 and make the repository importable as `blendgen`, so Docker is the most repeatable route for both development and dataset production.
+
+## Prerequisites
+
+- Git and Docker
+- A Blender scene with an active camera
+- NVIDIA Container Toolkit only when using Cycles on an NVIDIA GPU
+- Enough disk space for lossless EXR passes; depth, normals, and flow grow quickly
+
+Continue with [Installation](/getting-started/installation), then render [Your first dataset](/getting-started/first-dataset).
+
+## Before a large run
+
+Use a low resolution and `frame_length=1`. Verify that every pass file exists and inspect all semantic outputs together. Scale the resolution and frame range only after that smoke test passes.

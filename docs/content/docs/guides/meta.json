@@ -1,0 +1,10 @@
+{
+  "title": "Guides",
+  "pages": [
+    "architecture",
+    "render-backends",
+    "render-passes",
+    "callbacks-and-attributes",
+    "dataset-output"
+  ]
+}

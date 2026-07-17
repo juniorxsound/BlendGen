@@ -1,0 +1,224 @@
+---
+title: passes.base
+description: Generated Python API reference for blendgen.passes.base.
+---
+
+# `blendgen.passes.base`
+
+Public symbols exposed by `blendgen.passes.base`.
+
+## `ImageOutputType`
+
+[Class source](https://github.com/juniorxsound/BlendGen/blob/main/blendgen/passes/base.py#L11)
+
+```python
+class ImageOutputType(Enum)
+```
+
+An enum to change output file type of a given pass in a session
+@todo Add FFMPEG video and npy binary options to BlendGen
+
+### Values
+
+```python
+PNG = 'PNG'
+JPEG = 'JPEG'
+TIFF = 'TIFF'
+EXR = 'OPEN_EXR'
+```
+
+## `BaseRenderPass`
+
+[Class source](https://github.com/juniorxsound/BlendGen/blob/main/blendgen/passes/base.py#L22)
+
+```python
+class BaseRenderPass
+```
+
+No description is available yet.
+
+### Values
+
+```python
+kind = None
+```
+
+### `BaseRenderPass.__init__`
+
+[Method source](https://github.com/juniorxsound/BlendGen/blob/main/blendgen/passes/base.py#L24)
+
+```python
+def __init__(self, prefix=None, output_type=None, display_transform=False)
+```
+
+No description is available yet.
+
+### `BaseRenderPass.init`
+
+[Method source](https://github.com/juniorxsound/BlendGen/blob/main/blendgen/passes/base.py#L42)
+
+```python
+def init(self, scene, base_path, background)
+```
+
+No description is available yet.
+
+### `BaseRenderPass.add_map_value`
+
+[Method source](https://github.com/juniorxsound/BlendGen/blob/main/blendgen/passes/base.py#L50)
+
+```python
+def add_map_value(self, minimum=0, maximum=255, size=0.08)
+```
+
+Add a clamped Map Value compositor operation.
+
+### `BaseRenderPass.add_invert`
+
+[Method source](https://github.com/juniorxsound/BlendGen/blob/main/blendgen/passes/base.py#L55)
+
+```python
+def add_invert(self)
+```
+
+Add an image invert compositor operation.
+
+### `BaseRenderPass.add_material_index_mask`
+
+[Method source](https://github.com/juniorxsound/BlendGen/blob/main/blendgen/passes/base.py#L59)
+
+```python
+def add_material_index_mask(self, index, color=None)
+```
+
+Add a material-index mask, optionally colored with RGB values.
+
+### `BaseRenderPass.output`
+
+[Method source](https://github.com/juniorxsound/BlendGen/blob/main/blendgen/passes/base.py#L64)
+
+```python
+def output(self)
+```
+
+Create this pass's File Output node.
+
+### `BaseRenderPass.connect_nodes`
+
+[Method source](https://github.com/juniorxsound/BlendGen/blob/main/blendgen/passes/base.py#L71)
+
+```python
+def connect_nodes(self, layer_input)
+```
+
+No description is available yet.
+
+### `BaseRenderPass.create_pass`
+
+[Method source](https://github.com/juniorxsound/BlendGen/blob/main/blendgen/passes/base.py#L86)
+
+```python
+def create_pass(self, source_socket)
+```
+
+Build this pass from a backend-resolved compositor socket.
+
+### `BaseRenderPass.render_path`
+
+[Property source](https://github.com/juniorxsound/BlendGen/blob/main/blendgen/passes/base.py#L96)
+
+```python
+def render_path(self)
+```
+
+No description is available yet.
+
+### `BaseRenderPass.ops`
+
+[Property source](https://github.com/juniorxsound/BlendGen/blob/main/blendgen/passes/base.py#L100)
+
+```python
+def ops(self)
+```
+
+No description is available yet.
+
+### `BaseRenderPass.linker`
+
+[Property source](https://github.com/juniorxsound/BlendGen/blob/main/blendgen/passes/base.py#L104)
+
+```python
+def linker(self)
+```
+
+No description is available yet.
+
+### `BaseRenderPass.node_manager`
+
+[Property source](https://github.com/juniorxsound/BlendGen/blob/main/blendgen/passes/base.py#L108)
+
+```python
+def node_manager(self)
+```
+
+No description is available yet.
+
+### `BaseRenderPass.prefix`
+
+[Property source](https://github.com/juniorxsound/BlendGen/blob/main/blendgen/passes/base.py#L112)
+
+```python
+def prefix(self)
+```
+
+No description is available yet.
+
+### `BaseRenderPass.base_path`
+
+[Property source](https://github.com/juniorxsound/BlendGen/blob/main/blendgen/passes/base.py#L116)
+
+```python
+def base_path(self)
+```
+
+No description is available yet.
+
+### `BaseRenderPass.output_type`
+
+[Property source](https://github.com/juniorxsound/BlendGen/blob/main/blendgen/passes/base.py#L120)
+
+```python
+def output_type(self)
+```
+
+No description is available yet.
+
+### `BaseRenderPass.file_extension`
+
+[Property source](https://github.com/juniorxsound/BlendGen/blob/main/blendgen/passes/base.py#L124)
+
+```python
+def file_extension(self)
+```
+
+No description is available yet.
+
+### `BaseRenderPass.type`
+
+[Property source](https://github.com/juniorxsound/BlendGen/blob/main/blendgen/passes/base.py#L130)
+
+```python
+def type(self)
+```
+
+No description is available yet.
+
+### `BaseRenderPass.display_transform`
+
+[Property source](https://github.com/juniorxsound/BlendGen/blob/main/blendgen/passes/base.py#L134)
+
+```python
+def display_transform(self)
+```
+
+Whether non-EXR output should be converted to sRGB for display.

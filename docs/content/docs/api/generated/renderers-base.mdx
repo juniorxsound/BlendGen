@@ -1,0 +1,109 @@
+---
+title: renderers.base
+description: Generated Python API reference for blendgen.renderers.base.
+---
+
+# `blendgen.renderers.base`
+
+Renderer backend contracts and shared render-pass semantics.
+
+## `RenderPassKind`
+
+[Class source](https://github.com/juniorxsound/BlendGen/blob/main/blendgen/renderers/base.py#L8)
+
+```python
+class RenderPassKind(Enum)
+```
+
+Semantic passes exposed by BlendGen, independent of Blender sockets.
+
+### Values
+
+```python
+COLOR = 'color'
+ALPHA = 'alpha'
+DEPTH = 'depth'
+NORMAL = 'normal'
+OPTICAL_FLOW = 'optical_flow'
+MATERIAL_INDEX = 'material_index'
+```
+
+## `UnsupportedRenderPassError`
+
+[Class source](https://github.com/juniorxsound/BlendGen/blob/main/blendgen/renderers/base.py#L19)
+
+```python
+class UnsupportedRenderPassError(ValueError)
+```
+
+Raised when a backend cannot reliably produce a requested pass.
+
+## `RenderBackend`
+
+[Class source](https://github.com/juniorxsound/BlendGen/blob/main/blendgen/renderers/base.py#L23)
+
+```python
+class RenderBackend(Protocol)
+```
+
+The small interface used by :class:`blendgen.renderer.Renderer`.
+
+### `RenderBackend.name`
+
+[Property source](https://github.com/juniorxsound/BlendGen/blob/main/blendgen/renderers/base.py#L28)
+
+```python
+def name(self) -> str
+```
+
+Return the Blender engine identifier.
+
+### `RenderBackend.validate_passes`
+
+[Method source](https://github.com/juniorxsound/BlendGen/blob/main/blendgen/renderers/base.py#L33)
+
+```python
+def validate_passes(self, pass_kinds) -> None
+```
+
+Reject semantic passes unsupported by this backend.
+
+### `RenderBackend.configure_scene`
+
+[Method source](https://github.com/juniorxsound/BlendGen/blob/main/blendgen/renderers/base.py#L38)
+
+```python
+def configure_scene(self, scene, blender) -> None
+```
+
+Apply this backend's settings to one Blender scene.
+
+### `RenderBackend.bind_pass`
+
+[Method source](https://github.com/juniorxsound/BlendGen/blob/main/blendgen/renderers/base.py#L43)
+
+```python
+def bind_pass(self, pass_kind, view_layer, render_layers)
+```
+
+Enable and return the compositor source for a semantic pass.
+
+## `resolve_socket`
+
+[Function source](https://github.com/juniorxsound/BlendGen/blob/main/blendgen/renderers/base.py#L58)
+
+```python
+def resolve_socket(render_layers, pass_kind)
+```
+
+Resolve a compositor socket with compatibility aliases.
+
+## `validate_known_passes`
+
+[Function source](https://github.com/juniorxsound/BlendGen/blob/main/blendgen/renderers/base.py#L69)
+
+```python
+def validate_known_passes(pass_kinds)
+```
+
+Raise when a backend receives a pass outside BlendGen's semantics.

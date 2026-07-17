@@ -1,0 +1,93 @@
+---
+title: Your first dataset
+description: Declare a renderer, pass set, dataset index, and session explicitly.
+---
+
+Create `dataset.py` beside a `.blend` file. This example produces display color plus lossless metric and semantic channels:
+
+```python
+from pathlib import Path
+
+import bpy
+
+from blendgen.dataset import Dataset, DatasetOutputType
+from blendgen.passes.alpha import AlphaPass
+from blendgen.passes.base import ImageOutputType
+from blendgen.passes.color import ColorPass
+from blendgen.passes.depth import DepthPass
+from blendgen.passes.index import RawMaterialIndexPass
+from blendgen.passes.normal import NormalPass
+from blendgen.passes.opticalflow import OpticalFlowPass
+from blendgen.renderer import Background, Renderer
+from blendgen.renderers import CyclesBackend, CyclesDevice
+from blendgen.session import Session
+
+OUTPUT = "/data/output/"
+
+if bpy.context.scene.camera is None:
+    raise RuntimeError("The scene has no active camera")
+Path(OUTPUT).mkdir(parents=True, exist_ok=True)
+
+passes = [
+    ColorPass(prefix="color", output_type=ImageOutputType.PNG),
+    AlphaPass(prefix="alpha", output_type=ImageOutputType.PNG),
+    DepthPass(prefix="depth", output_type=ImageOutputType.EXR),
+    NormalPass(prefix="normal", output_type=ImageOutputType.EXR),
+    OpticalFlowPass(prefix="flow", output_type=ImageOutputType.EXR),
+    RawMaterialIndexPass(prefix="material_index", output_type=ImageOutputType.EXR),
+]
+
+renderer = Renderer(
+    backend=CyclesBackend(samples=8, device=CyclesDevice.GPU),
+    background=Background.ALPHA,
+    resolution_x=640,
+    resolution_y=360,
+    output_base_path=OUTPUT,
+    passes=passes,
+)
+
+dataset = Dataset(
+    prefix="",
+    dataset_name="My BlendGen dataset",
+    output_dir=OUTPUT,
+    filename="blendgen_dataset",
+    output_type=DatasetOutputType.JSON,
+)
+
+session = Session(
+    renderer=renderer,
+    dataset=dataset,
+    output_dir=OUTPUT,
+    frame_start=1,
+    frame_length=1,
+)
+
+print(session.info)
+session.run()
+```
+
+Run it against your scene:
+
+```bash
+docker run --rm --gpus all \
+  -v "$PWD":/data -w /data blendgen:latest \
+  blender --background --python-exit-code 1 /data/scene.blend \
+  --python /data/dataset.py
+```
+
+For CPU or Eevee, remove `--gpus all`. For a CPU Cycles run, change the dataset file to `CyclesDevice.CPU`.
+
+## Expected output
+
+```text
+output/
+├── alpha/Image0001.png
+├── color/Image0001.png
+├── depth/Image0001.exr
+├── flow/Image0001.exr
+├── material_index/Image0001.exr
+├── normal/Image0001.exr
+└── blendgen_dataset.json
+```
+
+The exact ordering is unimportant. Every path recorded in `blendgen_dataset.json` must point to a real file.

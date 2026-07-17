@@ -1,0 +1,136 @@
+---
+title: util
+description: Generated Python API reference for blendgen.util.
+---
+
+# `blendgen.util`
+
+Public symbols exposed by `blendgen.util`.
+
+## `camera_view_bounds_2d`
+
+[Function source](https://github.com/juniorxsound/BlendGen/blob/main/blendgen/util.py#L25)
+
+```python
+def camera_view_bounds_2d(scene, cam_ob, me_ob)
+```
+
+Returns camera space bounding box of mesh object.
+
+Negative 'z' value means the point is behind the camera.
+
+Takes shift-x/y, lens angle and sensor size into account
+as well as perspective/ortho projections.
+
+Thanks to the wonderful
+https://blender.stackexchange.com/questions/7198/save-the-2d-bounding-box-of-an-object-in-rendered-image-to-a-text-file
+
+:arg scene: Scene to use for frame size.
+:type scene: :class:`bpy.types.Scene`
+:arg obj: Camera object.
+:type obj: :class:`bpy.types.Object`
+:arg me: Untransformed Mesh.
+:type me: :class:`bpy.types.Mesh`
+:return: a Box object (call its to_tuple() method to get x, y, width and height)
+:rtype: :class:`Box`
+
+## `get_pose_bone_world_matrix`
+
+[Function source](https://github.com/juniorxsound/BlendGen/blob/main/blendgen/util.py#L108)
+
+```python
+def get_pose_bone_world_matrix(armature_object, bone_name)
+```
+
+Get a pose bone's world matrix
+
+Arguments:
+    armature_object &#123;`bpy.types.Object`&#125; -- The armature's object in the scene
+    pose_bone &#123;`str`&#125; -- The pose bone name to transform
+
+Returns:
+    &#123;`mathutils.Matrix`&#125; -- The world matrix for the pose bone
+
+## `get_screen_coords`
+
+[Function source](https://github.com/juniorxsound/BlendGen/blob/main/blendgen/util.py#L121)
+
+```python
+def get_screen_coords(world_position, renderer)
+```
+
+Utility to get screen coordinates of a world vector
+
+Arguments:
+    world_position &#123;`mathutils.Vector`&#125; -- The vector 3 to transform
+    renderer &#123;`blendgen.renderer.Renderer&#125; -- The blendgen renderer instance
+
+Returns:
+    [type] -- [description]
+
+## `get_sensor_size`
+
+[Function source](https://github.com/juniorxsound/BlendGen/blob/main/blendgen/util.py#L139)
+
+```python
+def get_sensor_size(sensor_fit, sensor_x, sensor_y)
+```
+
+Get the size of the sensor based on it's X, Y sizes
+
+Returns:
+    [float] - Width of sensor in float
+
+## `get_sensor_fit`
+
+[Function source](https://github.com/juniorxsound/BlendGen/blob/main/blendgen/util.py#L150)
+
+```python
+def get_sensor_fit(sensor_fit, size_x, size_y)
+```
+
+Get the aspect ratio of the sensor based on it's X, Y sizes
+
+Returns:
+    [str] - Type of sensor
+
+## `get_intrinsic_matrix`
+
+[Function source](https://github.com/juniorxsound/BlendGen/blob/main/blendgen/util.py#L163)
+
+```python
+def get_intrinsic_matrix(renderer)
+```
+
+uild intrinsic camera parameters from Blender camera data
+Arguments:
+    camera &#123;`blendgen.renderer.Renderer`&#125; -- The Blender camera object
+
+Returns:
+    [mathutils.Matrix] -- A 3x4 projection matrix
+
+## `get_rt_matrix`
+
+[Function source](https://github.com/juniorxsound/BlendGen/blob/main/blendgen/util.py#L208)
+
+```python
+def get_rt_matrix(renderer)
+```
+
+Returns camera rotation and translation matrices from Blender.
+
+Arguments:
+    renderer &#123;blendgen.renderer.Renderer&#125; - The BlendGen renderer
+
+Returns:
+    [mathutils.Matrix] - The RT matrix
+
+## `get_camera_matrices`
+
+[Function source](https://github.com/juniorxsound/BlendGen/blob/main/blendgen/util.py#L250)
+
+```python
+def get_camera_matrices(renderer)
+```
+
+Get projection, intrinsic and rotation and translation matrices from camera
